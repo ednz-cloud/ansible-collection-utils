@@ -31,6 +31,8 @@ provisioner:
   config_options:
     defaults:
       remote_tmp: /tmp/.ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles/
 verifier:
   name: ansible
 scenario:
