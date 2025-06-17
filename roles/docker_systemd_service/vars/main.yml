@@ -3,6 +3,8 @@
 docker_systemd_service_sysconf_dir: /etc/default
 docker_systemd_service_docker_path: "/usr/bin/docker"
 
+docker_systemd_service_exec_start_default: >-
+
 docker_systemd_service_systemd_unit_options_default:
   Requires: multi-user.target
   After: docker.service
@@ -15,9 +17,8 @@ docker_systemd_service_systemd_service_options_default:
     {{ docker_systemd_service_docker_path }} run --name {{ docker_systemd_service_container_name }} \
     --rm \
     --env-file {{ docker_systemd_service_sysconf_dir }}/{{ docker_systemd_service_name }} \
-    {{ (docker_systemd_service_flags | ednz_cloud.utils.to_cli_flags(multiline=true, trailing_backslash=true)) | trim }}
-    {{ docker_systemd_service_image }}{% if docker_systemd_service_container_cmd %} {{ docker_systemd_service_container_cmd if docker_systemd_service_container_cmd is string else docker_systemd_service_container_cmd | join(" ") }}{% endif %}
-
+    {{ (docker_systemd_service_flags | ednz_cloud.utils.to_cli_flags(multiline=true, trailing_backslash=true)) -}}{% if docker_systemd_service_flags +%}
+    {% endif %}{{ docker_systemd_service_image }}{% if docker_systemd_service_container_cmd %} {{ docker_systemd_service_container_cmd if docker_systemd_service_container_cmd is string else docker_systemd_service_container_cmd | join(" ") }}{% endif %}
   ExecStop: "{{ docker_systemd_service_docker_path }} stop {{ docker_systemd_service_container_name }}"
   Restart: always
   RestartSec: 10s
