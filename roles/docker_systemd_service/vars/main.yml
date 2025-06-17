@@ -1,0 +1,29 @@
+---
+# vars file for docker_systemd_service
+docker_systemd_service_sysconf_dir: /etc/default
+docker_systemd_service_docker_path: "/usr/bin/docker"
+
+docker_systemd_service_systemd_unit_options_default:
+  Requires: multi-user.target
+  After: docker.service
+  PartOf: docker.service
+
+docker_systemd_service_systemd_service_options_default:
+  EnvironmentFile: "{{ docker_systemd_service_sysconf_dir }}/{{ docker_systemd_service_name }}"
+  ExecStartPre: "-{{ docker_systemd_service_docker_path }} rm -f {{ docker_systemd_service_container_name }}"
+  ExecStart: |
+    {{ docker_systemd_service_docker_path }} run --name {{ docker_systemd_service_container_name }} \
+    --rm \
+    --env-file {{ docker_systemd_service_sysconf_dir }}/{{ docker_systemd_service_name }} \
+    {{ (docker_systemd_service_flags | ednz_cloud.utils.to_cli_flags(multiline=true, trailing_backslash=true)) | trim }}
+    {{ docker_systemd_service_image }}{% if docker_systemd_service_container_cmd %} {{ docker_systemd_service_container_cmd if docker_systemd_service_container_cmd is string else docker_systemd_service_container_cmd | join(" ") }}{% endif %}
+
+  ExecStop: "{{ docker_systemd_service_docker_path }} stop {{ docker_systemd_service_container_name }}"
+  Restart: always
+  RestartSec: 10s
+  SyslogIdentifier: "{{ docker_systemd_service_container_name }}"
+
+docker_systemd_service_systemd_install_options_default:
+  WantedBy:
+    - multi-user.target
+    - docker.service

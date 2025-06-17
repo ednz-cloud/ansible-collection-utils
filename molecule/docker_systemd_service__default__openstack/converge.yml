@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:
+    - name: "Include ednz_cloud.utils.docker_systemd_service"
+      ansible.builtin.include_role:
+        name: "ednz_cloud.utils.docker_systemd_service"
