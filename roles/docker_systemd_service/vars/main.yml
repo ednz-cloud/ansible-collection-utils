@@ -27,4 +27,3 @@ docker_systemd_service_systemd_service_options_default:
 docker_systemd_service_systemd_install_options_default:
   WantedBy:
     - multi-user.target
-    - docker.service
