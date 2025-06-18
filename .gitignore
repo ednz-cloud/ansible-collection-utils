@@ -2,4 +2,4 @@
 **/__pycache__
 .vscode
 roles/ednz_cloud.*
-tests/output/*
+tests/output
