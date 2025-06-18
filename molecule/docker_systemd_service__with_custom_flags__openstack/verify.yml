@@ -72,7 +72,6 @@
 
               [Install]
               WantedBy=multi-user.target
-              WantedBy=docker.service
           ansible.builtin.assert:
             that:
               - stat_etc_systemd_system_nginx_container_service.stat.exists
