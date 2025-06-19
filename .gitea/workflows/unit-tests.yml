@@ -49,7 +49,7 @@ jobs:
         working-directory: ${{ gitea.workspace }}
 
       - name: Run ansible unit tests
-        run: ansible-test units --coverage --python ${{ matrix.python-version }}
+        run: ansible-test units --coverage --python ${{ matrix.python-version }} --color yes
         shell: bash
         working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/utils
 
