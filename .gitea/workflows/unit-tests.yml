@@ -1,5 +1,5 @@
-name: Unit tests
-
+---
+name: unit-tests
 on:
   pull_request:
     types:
@@ -10,5 +10,50 @@ on:
       - main
 
 jobs:
-  unit-source:
-    uses: https://github.com/ansible-network/github_actions/.github/workflows/unit_source.yml@main
+  unit_tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: "1"
+    strategy:
+      matrix:
+        ansible-version:
+          - 2.16
+          - 2.17
+          - 2.18
+        python-version:
+          - 3.10
+          - 3.11
+          - 3.12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install ansible
+        run: |
+          pip3 install "ansible-core==${{ matrix.ansible-version }}"
+
+      - name: Install requirements
+        run: pip3 install -r tests/requirements.txt
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - name: Setup testing environment
+        run: ansible-galaxy collection install ${{ gitea.workspace }}
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
+
+      - name: Run ansible unit tests
+        run: ansible-test units --coverage --python ${{ matrix.python-version }}
+        shell: bash
+        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/infomaniak
+
+      - name: Print coverage informations
+        run: ansible-test coverage report
+        shell: bash
+        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/infomaniak

@@ -60,10 +60,8 @@ jobs:
           - test_os: "Ubuntu 24.04 LTS Noble Numbat"
             test_user: "ubuntu"
         scenario:
-          [
-            "install_docker__default__openstack",
-            "install_docker__install_all__openstack",
-          ]
+          - install_docker__default__openstack
+          - install_docker__install_all__openstack
     steps:
       - name: Checkout
         uses: actions/checkout@v4
