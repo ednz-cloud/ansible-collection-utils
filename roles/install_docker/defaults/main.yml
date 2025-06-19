@@ -1,0 +1,73 @@
+---
+# defaults file for docker
+
+# title: Docker version to install
+# required: false
+# description-lines:
+# Specifies the version of Docker to install.
+# Use 'latest' to always get the most recent release from Docker's GitHub repository.
+# You can also specify a version tag (e.g., '24.0.7').
+install_docker_version: latest
+
+# title: Start Docker service
+# required: false
+# description-lines:
+# Determines whether the Docker service should be started after installation.
+# Set to true to start the service automatically.
+install_docker_start_service: true
+
+# title: Docker data directory
+# required: false
+# description-lines:
+# Sets the root directory used by Docker to store container data, images, and volumes.
+# Changing this may require updating the daemon configuration and moving existing data.
+install_docker_data_dir: /var/lib/docker
+
+# title: Additional Docker group users
+# required: false
+# description-lines:
+# List of system users to be added to the 'docker' group.
+# This allows the specified users to run Docker commands without sudo.
+install_docker_users: []
+
+# title: Docker daemon options
+# required: false
+# description-lines:
+# Dictionary of custom options to include in the Docker daemon configuration (daemon.json).
+# Common options include log-driver, storage-driver, and insecure registries.
+install_docker_daemon_options: {}
+
+# title: Install Docker Python packages
+# required: false
+# description-lines:
+# Whether to install Python packages required for Ansible Docker modules (e.g., docker-py).
+# Set to true if you plan to manage containers via Ansible tasks.
+install_docker_python_packages: false
+
+# title: Install Docker Compose
+# required: false
+# description-lines:
+# Determines whether Docker Compose should be installed.
+# If true, the version specified in install_docker_compose_version will be downloaded from GitHub.
+install_docker_compose: false
+
+# title: Docker Compose version
+# required: false
+# description-lines:
+# Specifies the version of Docker Compose to install from GitHub releases.
+# Use 'latest' to install the most recent stable version, or specify a version tag (e.g., 'v2.27.0').
+install_docker_compose_version: latest
+
+# title: Install shell completions
+# required: false
+# description-lines:
+# Controls whether Docker CLI autocompletion scripts should be installed.
+# Enhances shell usability for Docker commands.
+install_docker_install_completion: true
+
+# title: Shell type for completion
+# required: false
+# description-lines:
+# Defines the shell type (e.g., bash, zsh) for which Docker completion scripts should be installed.
+# Leave empty to disable or auto-detect based on user shell environment.
+install_docker_completion_shell:

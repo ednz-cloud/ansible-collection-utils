@@ -1,0 +1,61 @@
+---
+# task/main file for docker
+- name: "Docker | Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _install_docker_service_need_daemon_reload: false
+    _install_docker_service_need_reload: false
+    _install_docker_service_docker_need_restart: false
+    _install_docker_socket_docker_need_restart: false
+    _install_docker_service_containerd_need_restart: false
+
+- name: "Import prerequisites.yml"
+  ansible.builtin.include_tasks: prerequisites.yml
+
+- name: "Import install.yml"
+  ansible.builtin.include_tasks: install.yml
+
+- name: "Import install_compose.yml"
+  ansible.builtin.include_tasks: install_compose.yml
+  when: install_docker_compose
+
+- name: "Import install_python_docker.yml"
+  ansible.builtin.include_tasks: install_python_docker.yml
+  when: install_docker_python_packages
+
+- name: "Import configure.yml"
+  ansible.builtin.include_tasks: configure.yml
+
+- name: "Docker | Enable sockets: {{ install_docker_socket_list }}"
+  ansible.builtin.service:
+    name: "{{ item }}.socket"
+    enabled: true
+  loop: "{{ install_docker_socket_list }}"
+
+- name: "Docker | Enable services: {{ install_docker_service_list }}"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  loop: "{{ install_docker_service_list }}"
+
+- name: "Docker | Reload systemd daemon"
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: _install_docker_service_need_daemon_reload
+
+- name: "Docker | Reload services: docker"
+  ansible.builtin.service:
+    name: docker
+    state: reloaded
+  when:
+    - install_docker_start_service
+    - _install_docker_service_need_reload
+    - not _install_docker_service_docker_need_restart
+
+- name: "Docker | Start services: {{ install_docker_service_list }}"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop: "{{ install_docker_service_list }}"
+  when:
+    - install_docker_start_service
+    - vars['_install_docker_service_'~item~'_need_restart']

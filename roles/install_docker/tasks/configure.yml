@@ -1,0 +1,83 @@
+---
+# task/configure file for install_docker
+- name: "Docker | Add specified users to group {{ install_docker_group }}"
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: "{{ install_docker_group }}"
+    append: true
+  loop: "{{ install_docker_users }}"
+
+- name: "Docker | Copy daemon.json template"
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: "{{ install_docker_daemon_dir }}/daemon.json"
+    owner: root
+    group: root
+    mode: "0640"
+  register: _install_docker_daemon_config
+
+- name: "Docker | Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _install_docker_service_need_reload: true
+  when: _install_docker_daemon_config.changed # noqa: no-handler
+
+- name: "Docker | Ensure modprobe modules are loaded"
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+    persistent: present
+  loop: "{{ install_docker_modprobe_modules }}"
+  register: _install_docker_modprobe_modules
+
+- name: "Docker | Ensure sysctl options are proprerly set"
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    sysctl_set: true
+  loop: "{{ install_docker_sysctl_entries | dict2items }}"
+  register: _install_docker_sysctl_options
+
+- name: "Docker | Set restart-check variable"
+  ansible.builtin.set_fact:
+    _install_docker_service_docker_need_restart: true
+    _install_docker_service_containerd_need_restart: true
+    _install_docker_socket_docker_need_restart: true
+  when: >- # noqa: no-handler
+    _install_docker_sysctl_options.changed or
+    _install_docker_modprobe_modules.changed
+
+- name: "Docker | Get docker completion"
+  ansible.builtin.command:
+    argv:
+      - "{{ install_docker_binary_path }}/docker"
+      - "completion"
+      - >-
+        {{
+          install_docker_completion_shell if install_docker_completion_shell is not none
+          else (ansible_facts.env.SHELL | basename)
+        }}
+  changed_when: false
+  failed_when: _install_docker_completion.rc != 0
+  register: _install_docker_completion
+
+- name: "Docker | Install completion for bash"
+  when:
+    - install_docker_install_completion
+    - (install_docker_completion_shell is none or install_docker_completion_shell == 'bash')
+  block:
+    - name: "Docker | Ensure /etc/bash_completion.d directory exists"
+      ansible.builtin.file:
+        path: "/etc/bash_completion.d"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: "Docker | Copy bash completion"
+      ansible.builtin.copy:
+        content: "{{ _install_docker_completion.stdout }}"
+        dest: /etc/bash_completion.d/docker
+        owner: root
+        group: root
+        mode: "0644"

@@ -1,0 +1,93 @@
+---
+# vars file for install_docker
+
+# title: Docker binary installation path
+# required: false
+# description: Filesystem path where Docker binaries will be installed
+install_docker_binary_path: /usr/local/bin
+
+# title: Docker Compose binary path
+# required: false
+# description: Path where the Docker Compose binary will be installed
+install_docker_compose_path: "{{ install_docker_binary_path }}/docker-compose"
+
+# title: Owner user for Docker files
+# required: false
+# description: System user that owns Docker-related files and directories
+install_docker_user: root
+
+# title: Docker system group
+# required: false
+# description: Group used for granting access to the Docker socket
+install_docker_group: docker
+
+# title: Docker daemon config directory
+# required: false
+# description: Filesystem path to Docker's daemon configuration files
+install_docker_daemon_dir: /etc/docker
+
+# title: Docker-related system services
+# required: false
+# description: List of system services managed by the role during install
+install_docker_service_list:
+  - containerd
+  - docker
+
+# title: Docker-related Unix sockets
+# required: false
+# description: List of Docker socket names to check/manage
+install_docker_socket_list:
+  - docker
+
+# title: Docker architecture mapping
+# required: false
+# description: Maps Ansible system architecture names to GitHub Docker release architecture names
+install_docker_architecture_map:
+  armv7l: "armhf"
+  armv6l: "armhf"
+
+# title: Python packages for Docker support
+# required: false
+# description: List of Python packages required for Docker Ansible modules
+install_docker_python_packages_list:
+  - name: python3-docker
+    version: latest
+    state: present
+
+# title: Docker-related sysctl entries
+# required: false
+# description: Kernel sysctl parameters required for Docker networking
+install_docker_sysctl_entries:
+  net.bridge.bridge-nf-call-iptables: 1
+  net.bridge.bridge-nf-call-ip6tables: 1
+
+# title: Kernel modules for Docker
+# required: false
+# description: List of kernel modules to load for Docker functionality
+install_docker_modprobe_modules:
+  - br_netfilter
+
+# title: GitHub API base URL
+# required: false
+# description: Base URL for GitHub API used to fetch Docker release data
+install_docker_github_api: https://api.github.com/repos
+
+# title: GitHub base URL
+# required: false
+# description: Base URL for GitHub used to construct download links
+install_docker_github_url: https://github.com
+
+# title: GitHub project for Docker
+# required: false
+# description: GitHub repository for Docker Engine releases
+install_docker_github_project: moby/moby
+
+# title: Docker release repository URL
+# required: false
+# description: URL to fetch Docker static binaries based on system architecture
+install_docker_repository_url: "https://download.docker.com/linux/static/stable/{{ install_docker_architecture_map[ansible_architecture]|default(ansible_architecture) }}"
+
+# title: GitHub project for Docker Compose
+# required: false
+# description: GitHub repository for Docker Compose releases
+install_docker_compose_github_project: docker/compose

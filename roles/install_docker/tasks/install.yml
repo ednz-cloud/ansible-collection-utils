@@ -1,0 +1,139 @@
+---
+# task/install file for docker
+- name: "Docker | Get latest release of docker"
+  when: install_docker_version == 'latest'
+  block:
+    - name: "Docker | Get latest docker release from github api"
+      ansible.builtin.uri:
+        url: "{{ install_docker_github_api }}/{{ install_docker_github_project }}/releases/latest"
+        return_content: true
+      register: _install_docker_latest_release
+
+    - name: "Docker | Set wanted docker version to latest tag"
+      ansible.builtin.set_fact:
+        _install_docker_wanted_version: "{{ _install_docker_latest_release.json['tag_name']|regex_replace('v', '') }}"
+
+- name: "Docker | Set wanted docker version to {{ install_docker_version }}"
+  ansible.builtin.set_fact:
+    _install_docker_wanted_version: "{{ install_docker_version|regex_replace('v', '') }}"
+  when: install_docker_version != 'latest'
+
+- name: "Docker | Get current docker version"
+  block:
+    - name: "Docker | Stat docker version file"
+      ansible.builtin.stat:
+        path: "{{ install_docker_daemon_dir }}/.version"
+      changed_when: false
+      check_mode: false
+      register: _install_docker_version_file
+
+    - name: "Docker | Get current docker version"
+      ansible.builtin.slurp:
+        src: "{{ _install_docker_version_file.stat.path }}"
+      when:
+        - _install_docker_version_file.stat.exists
+        - _install_docker_version_file.stat.isreg
+      register: _install_docker_current_version
+
+- name: "Docker | Download and install docker binaries"
+  when: _install_docker_current_version is not defined
+    or _install_docker_wanted_version != (_install_docker_current_version.content|default('')|b64decode)
+  block:
+    - name: "Docker | Set docker package name to download"
+      ansible.builtin.set_fact:
+        _install_docker_package_name: "docker-{{ _install_docker_wanted_version }}.tgz"
+
+    - name: "Docker | Download docker binary archive"
+      ansible.builtin.get_url:
+        url: "{{ install_docker_repository_url }}/{{ _install_docker_package_name }}"
+        dest: "/tmp/{{ _install_docker_package_name }}"
+        mode: "0644"
+        # checksum: "sha256:{{ _consul_expected_checksum }}"
+      register: _install_docker_binary_archive
+      until: _install_docker_binary_archive is succeeded
+      retries: 5
+      delay: 2
+      check_mode: false
+
+    - name: "Docker | Create temporary directory for archive decompression"
+      ansible.builtin.file:
+        path: /tmp/docker
+        state: directory
+        mode: "0755"
+
+    - name: "Docker | Unpack docker archive"
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ _install_docker_package_name }}"
+        dest: "/tmp/docker"
+        owner: "{{ install_docker_user }}"
+        group: "{{ install_docker_group }}"
+        mode: "0755"
+        remote_src: true
+
+    - name: "Docker | Get list of binaries"
+      ansible.builtin.find:
+        paths: /tmp/docker/docker
+      register: _install_docker_binaries_list
+
+    - name: "Docker | Copy docker binaries to {{ install_docker_binary_path }}"
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ install_docker_binary_path }}/{{ item.path | basename }}"
+        owner: root
+        group: root
+        mode: "0755"
+        remote_src: true
+        force: true
+      loop: "{{ _install_docker_binaries_list.files }}"
+
+    - name: "Docker | Update docker version file"
+      ansible.builtin.copy:
+        content: "{{ _install_docker_wanted_version }}"
+        dest: "{{ install_docker_daemon_dir }}/.version"
+        owner: "{{ install_docker_user }}"
+        group: "{{ install_docker_group }}"
+        mode: "0600"
+
+    - name: "Docker | Set restart-check variable"
+      ansible.builtin.set_fact:
+        _install_docker_service_docker_need_restart: true
+        _install_docker_service_containerd_need_restart: true
+        _install_docker_socket_docker_need_restart: true
+
+    - name: "Docker | Cleanup temporary directory"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/docker
+        - /tmp/{{ _install_docker_package_name }}
+
+- name: "Docker | Copy systemd service files for docker"
+  ansible.builtin.template:
+    src: "{{ item }}.service.j2"
+    dest: "/etc/systemd/system/{{ item }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _install_docker_unit_files
+  loop: "{{ install_docker_service_list }}"
+
+- name: "Docker | Copy systemd socket files for docker"
+  ansible.builtin.template:
+    src: "{{ item }}.socket.j2"
+    dest: "/etc/systemd/system/{{ item }}.socket"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _install_docker_socket_files
+  loop: "{{ install_docker_socket_list }}"
+
+- name: "Docker | Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _install_docker_service_need_daemon_reload: true
+    _install_docker_service_docker_need_restart: "{{ _install_docker_unit_files.results | ednz_cloud.utils.item_changed_in_list('docker') }}"
+    _install_docker_service_containerd_need_restart: "{{ _install_docker_unit_files.results | ednz_cloud.utils.item_changed_in_list('containerd') }}"
+    _install_docker_socket_docker_need_restart: "{{ _install_docker_socket_files.results | ednz_cloud.utils.item_changed_in_list('docker') }}"
+  when: >- # noqa: no-handler
+    _install_docker_unit_files.changed or
+    _install_docker_socket_files.changed

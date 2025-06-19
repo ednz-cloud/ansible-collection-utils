@@ -1,0 +1,10 @@
+---
+install_docker_version: latest
+install_docker_start_service: true
+install_docker_users: []
+install_docker_daemon_options: {}
+install_docker_python_packages: true
+install_docker_compose: true
+install_docker_compose_version: latest
+install_docker_install_completion: true
+install_docker_completion_shell:

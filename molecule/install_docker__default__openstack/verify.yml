@@ -1,0 +1,153 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test | Group docker"
+      block:
+        - name: "Gather | Getent group docker"
+          ansible.builtin.getent:
+            database: group
+            key: docker
+          register: _docker_group
+
+        - name: "Verify | Group docker"
+          ansible.builtin.assert:
+            that:
+              - not _docker_group.failed
+              - "'docker' in _docker_group.ansible_facts.getent_group.keys()"
+
+    - name: "Test | Docker binaries"
+      block:
+        - name: "Gather | Stat file /usr/local/bin/dockerd"
+          ansible.builtin.stat:
+            path: "/usr/local/bin/dockerd"
+          register: _stat_usr_local_bin_dockerd
+
+        - name: "Gather | Stat file /usr/local/bin/docker"
+          ansible.builtin.stat:
+            path: "/usr/local/bin/docker"
+          register: _stat_usr_local_bin_docker
+
+        - name: "Gather | Stat file /usr/local/bin/containerd"
+          ansible.builtin.stat:
+            path: "/usr/local/bin/containerd"
+          register: _stat_usr_local_bin_containerd
+
+        - name: "Verify | Docker binaries"
+          ansible.builtin.assert:
+            that:
+              - _stat_usr_local_bin_dockerd.stat.exists
+              - _stat_usr_local_bin_dockerd.stat.isreg
+              - _stat_usr_local_bin_dockerd.stat.pw_name == 'root'
+              - _stat_usr_local_bin_dockerd.stat.gr_name == 'root'
+              - _stat_usr_local_bin_dockerd.stat.mode == '0755'
+              - _stat_usr_local_bin_docker.stat.exists
+              - _stat_usr_local_bin_docker.stat.isreg
+              - _stat_usr_local_bin_docker.stat.pw_name == 'root'
+              - _stat_usr_local_bin_docker.stat.gr_name == 'root'
+              - _stat_usr_local_bin_docker.stat.mode == '0755'
+              - _stat_usr_local_bin_containerd.stat.exists
+              - _stat_usr_local_bin_containerd.stat.isreg
+              - _stat_usr_local_bin_containerd.stat.pw_name == 'root'
+              - _stat_usr_local_bin_containerd.stat.gr_name == 'root'
+              - _stat_usr_local_bin_containerd.stat.mode == '0755'
+
+    - name: "Test | Service docker"
+      block:
+        - name: "Gather | Get service docker"
+          ansible.builtin.service_facts:
+
+        - name: "Gather | Stat file /etc/systemd/system/docker.service"
+          ansible.builtin.stat:
+            path: "/etc/systemd/system/docker.service"
+          register: _stat_etc_systemd_system_docker_service
+
+        - name: "Verify | Service docker"
+          ansible.builtin.assert:
+            that:
+              - _stat_etc_systemd_system_docker_service.stat.exists
+              - _stat_etc_systemd_system_docker_service.stat.isreg
+              - _stat_etc_systemd_system_docker_service.stat.pw_name == 'root'
+              - _stat_etc_systemd_system_docker_service.stat.gr_name == 'root'
+              - _stat_etc_systemd_system_docker_service.stat.mode == '0644'
+              - ansible_facts.services['docker.service'] is defined
+              - ansible_facts.services['docker.service']['source'] == 'systemd'
+              - ansible_facts.services['docker.service']['state'] == 'running'
+              - ansible_facts.services['docker.service']['status'] == 'enabled'
+
+    - name: "Test | File /etc/docker/daemon.json"
+      block:
+        - name: "Gather | Stat directory /etc/docker"
+          ansible.builtin.stat:
+            path: "/etc/docker"
+          register: _stat_etc_docker
+
+        - name: "Gather | Stat file /etc/docker/daemon.json"
+          ansible.builtin.stat:
+            path: "/etc/docker/daemon.json"
+          register: _stat_etc_docker_docker_json
+
+        - name: "Gather | Slurp file /etc/docker/daemon.json"
+          ansible.builtin.slurp:
+            src: "/etc/docker/daemon.json"
+          register: _slurp_etc_docker_docker_json
+
+        - name: "Verify | Directory /etc/docker"
+          ansible.builtin.assert:
+            that:
+              - _stat_etc_docker.stat.exists
+              - _stat_etc_docker.stat.isdir
+              - _stat_etc_docker.stat.pw_name == 'root'
+              - _stat_etc_docker.stat.gr_name == 'root'
+              - _stat_etc_docker.stat.mode == '0755'
+              - _stat_etc_docker_docker_json.stat.exists
+              - _stat_etc_docker_docker_json.stat.isreg
+              - _stat_etc_docker_docker_json.stat.pw_name == 'root'
+              - _stat_etc_docker_docker_json.stat.gr_name == 'root'
+              - _stat_etc_docker_docker_json.stat.mode == '0640'
+              - (_slurp_etc_docker_docker_json.content|b64decode|from_json) == {}
+
+    - name: "Test | Docker interactions"
+      block:
+        - name: "Gather | Query socket /containers/json"
+          ansible.builtin.uri:
+            url: http://localhost/containers/json
+            unix_socket: "/var/run/docker.sock"
+          register: _socket_containers_json
+
+        - name: "Gather | Query socket /images/json"
+          ansible.builtin.uri:
+            url: http://localhost/images/json
+            unix_socket: "/var/run/docker.sock"
+          register: _socket_images_json
+
+        - name: "Verify | Docker interactions"
+          ansible.builtin.assert:
+            that:
+              - _socket_containers_json.json == []
+              - _socket_images_json.json == []
+
+    - name: "Test | File /usr/local/bin/docker-compose"
+      block:
+        - name: "Stat file /usr/local/bin/docker-compose"
+          ansible.builtin.stat:
+            path: "/usr/local/bin/docker-compose"
+          register: _stat_usr_local_bin_docker_compose
+
+        - name: "Verify file /usr/local/bin/docker-compose"
+          ansible.builtin.assert:
+            that:
+              - not _stat_usr_local_bin_docker_compose.stat.exists
+
+    - name: "Test | Package python3-docker"
+      block:
+        - name: "Gather | Package facts"
+          ansible.builtin.package_facts:
+            manager: auto
+
+        - name: "Verify | Package python3-docker"
+          ansible.builtin.assert:
+            that:
+              - ansible_facts.packages['python3-docker'] is not defined
