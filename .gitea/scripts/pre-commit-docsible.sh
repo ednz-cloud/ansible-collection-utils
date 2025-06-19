@@ -3,9 +3,13 @@ set -euo pipefail
 
 role_dirs=$(git ls-tree -d --name-only HEAD roles/)
 
+checked_roles=()
+
 for role in $role_dirs; do
-  echo "Checking docsible in: $role"
+  echo "Running docsible on $role"
   docsible --role "$role" --no-backup
+  checked_roles+=("$role")
 done
 
-git diff --exit-code
+echo "Checking for diffs in updated roles..."
+git diff --exit-code -- ${checked_roles[@]}
