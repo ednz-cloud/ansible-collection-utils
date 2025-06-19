@@ -1,15 +1,43 @@
 ---
 # vars file for docker_systemd_service
+
+# title: Systemd sysconfig directory
+# required: false
+# description-lines:
+# Defines the directory where environment variable files for systemd are stored.
+# Typically this is /etc/default on Debian-based systems.
 docker_systemd_service_sysconf_dir: /etc/default
+
+# title: Docker binary path
+# required: false
+# description-lines:
+# Absolute path to the Docker CLI executable on the target system.
+# Adjust if using a non-standard Docker installation.
 docker_systemd_service_docker_path: "/usr/bin/docker"
 
+# title: Default ExecStart override
+# required: false
+# description-lines:
+# Placeholder for a custom ExecStart command.
+# This can be used to fully override the Docker run command.
 docker_systemd_service_exec_start_default: >-
 
+# title: Default systemd unit options
+# required: false
+# description-lines:
+# Dictionary of default options for the [Unit] section of the systemd unit file.
+# Controls dependencies and ordering of the Docker container unit.
 docker_systemd_service_systemd_unit_options_default:
   Requires: multi-user.target
   After: docker.service
   PartOf: docker.service
 
+# title: Default systemd service options
+# required: false
+# description-lines:
+# Dictionary of default options for the [Service] section of the systemd unit file.
+# Includes the full `ExecStart` command that runs the container and other service behaviors.
+# Most options should not be overridden unless you need specific behavior.
 docker_systemd_service_systemd_service_options_default:
   EnvironmentFile: "{{ docker_systemd_service_sysconf_dir }}/{{ docker_systemd_service_name }}"
   ExecStartPre: "-{{ docker_systemd_service_docker_path }} rm -f {{ docker_systemd_service_container_name }}"
@@ -24,6 +52,12 @@ docker_systemd_service_systemd_service_options_default:
   RestartSec: 10s
   SyslogIdentifier: "{{ docker_systemd_service_container_name }}"
 
+# title: Default systemd install options
+# required: false
+# description-lines:
+# Dictionary of default entries for the [Install] section of the systemd unit file.
+# Specifies the target under which the service should be enabled.
+# For repeated options, the expected is a list of values (eg. WantedBy).
 docker_systemd_service_systemd_install_options_default:
   WantedBy:
     - multi-user.target

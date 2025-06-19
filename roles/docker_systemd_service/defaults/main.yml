@@ -1,14 +1,88 @@
 ---
 # defaults file for docker_systemd_service
+
+# title: Docker container name
+# required: true
+# description-lines:
+# Name of the Docker container to be managed by the systemd service.
+# Used as the basis for naming the systemd unit file and identifying the container.
 docker_systemd_service_container_name: "my_service"
+
+# title: Docker image to run
+# required: true
+# description-lines:
+# Name of the Docker image to use for the container.
+# This can include a tag (e.g., 'nginx:latest').
 docker_systemd_service_image:
+
+# title: Container environment variables
+# required: false
+# description-lines:
+# Dictionary of environment variables to pass into the container.
+# Keys are variable names and values are strings or Jinja2 expressions.
 docker_systemd_service_container_env: {}
+
+# title: Pull image before running
+# required: false
+# description-lines:
+# If true, pulls the latest version of the Docker image before starting the container.
 docker_systemd_service_container_pull_image: true
+
+# title: Force pull from source registry
+# required: false
+# description-lines:
+# If true, forces a fresh image pull even if a local image with the same tag exists.
 docker_systemd_service_container_pull_force_source: true
+
+# title: Additional Docker CLI flags
+# required: false
+# description-lines:
+# List of extra flags to pass to the Docker CLI when starting the container.
+# Useful for custom networking, volume mounts, or runtime options.
 docker_systemd_service_flags: []
+
+# title: Docker command override
+# required: false
+# description-lines:
+# List of arguments to override the default container CMD.
+# Useful if you want to change the startup behavior of the image.
 docker_systemd_service_container_cmd: []
+
+# title: Systemd service name
+# required: false
+# description-lines:
+# Name of the systemd service unit that wraps the Docker container.
+# Defaults to the container name with '_container' suffix.
 docker_systemd_service_name: "{{ docker_systemd_service_container_name }}_container"
+
+# title: Systemd unit file options
+# required: false
+# description-lines:
+# Dictionary of raw unit file entries to include in the generated systemd unit.
+# These settings go under the [Unit] section.
+# These are merged with the default options defined in docker_systemd_service_systemd_unit_options_default.
 docker_systemd_service_systemd_unit_options: {}
+
+# title: Systemd service options
+# required: false
+# description-lines:
+# Dictionary of raw service options to include under the [Service] section in systemd.
+# Can include options like Restart=always, TimeoutStartSec, etc.
+# These are merged with the default options defined in docker_systemd_service_systemd_service_options_default.
 docker_systemd_service_systemd_service_options: {}
+
+# title: Systemd install options
+# required: false
+# description-lines:
+# Dictionary of entries for the [Install] section of the systemd unit.
+# Typically includes settings like WantedBy=multi-user.target.
+# These are merged with the default options defined in docker_systemd_service_systemd_install_options_default.
 docker_systemd_service_systemd_install_options: {}
+
+# title: Start the systemd service
+# required: false
+# description-lines:
+# If true, ensures the systemd service is started and enabled.
+# If false, the service will be enabled, but not started.
+# This allows for manual start control after deployment.
 docker_systemd_service_start: true
