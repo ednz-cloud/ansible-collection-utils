@@ -46,12 +46,27 @@ class CLIFlagBuilder:
         return None
 
 
-def to_cli_flags(flags, multiline=False, trailing_backslash=False):
-    return CLIFlagBuilder(flags, multiline, trailing_backslash).build()
+class FilterModule:
+    """
+    Ansible filter plugin to convert a list of flags into a CLI-compatible string.
+    """
 
-
-class FilterModule(object):
     def filters(self):
         return {
-            "to_cli_flags": to_cli_flags,
+            "to_cli_flags": self.to_cli_flags,
         }
+
+    @staticmethod
+    def to_cli_flags(flags, multiline=False, trailing_backslash=False):
+        """
+        Convert a list of CLI flags into a string for command-line usage.
+
+        Args:
+            flags (list): A list of strings or dicts representing CLI flags.
+            multiline (bool): If True, output is multiline with backslashes.
+            trailing_backslash (bool): If True, keep trailing backslash on last line.
+
+        Returns:
+            str: A CLI-ready string of flags.
+        """
+        return CLIFlagBuilder(flags, multiline, trailing_backslash).build()
