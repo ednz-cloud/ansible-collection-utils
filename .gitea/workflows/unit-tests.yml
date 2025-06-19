@@ -51,9 +51,9 @@ jobs:
       - name: Run ansible unit tests
         run: ansible-test units --coverage --python ${{ matrix.python-version }}
         shell: bash
-        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/infomaniak
+        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/utils
 
       - name: Print coverage informations
         run: ansible-test coverage report
         shell: bash
-        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/infomaniak
+        working-directory: /root/.ansible/collections/ansible_collections/ednz_cloud/utils
