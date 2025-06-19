@@ -4,13 +4,7 @@
 
 ## install_docker
 
-```
-Role belongs to ednz_cloud/utils
-Namespace - ednz_cloud
-Collection - utils
-Version - 0.1.0
-Repository - https://git.ednz.fr/ansible-collections/ednz_cloud.utils.git
-```
+
 
 Description: Install and configure docker for debian-based distros.
 
@@ -34,16 +28,16 @@ Description: Install and configure docker for debian-based distros.
 
 | Var          | Type         | Value       |Required    | Title       |
 |--------------|--------------|-------------|------------|-------------|
-| [install_docker_version](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L10)   | str | `latest` |    false  |  Docker version to install |
-| [install_docker_start_service](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L17)   | bool | `True` |    false  |  Start Docker service |
-| [install_docker_data_dir](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L24)   | str | `/var/lib/docker` |    false  |  Docker data directory |
-| [install_docker_users](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L31)   | list | `[]` |    false  |  Additional Docker group users |
-| [install_docker_daemon_options](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L38)   | dict | `{}` |    false  |  Docker daemon options |
-| [install_docker_python_packages](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L45)   | bool | `False` |    false  |  Install Docker Python packages |
-| [install_docker_compose](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L52)   | bool | `False` |    false  |  Install Docker Compose |
-| [install_docker_compose_version](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L59)   | str | `latest` |    false  |  Docker Compose version |
-| [install_docker_install_completion](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L66)   | bool | `True` |    false  |  Install shell completions |
-| [install_docker_completion_shell](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/defaults/main.yml#L73)   | NoneType | `None` |    false  |  Shell type for completion |
+| [install_docker_version](defaults/main.yml#L10)   | str | `latest` |    false  |  Docker version to install |
+| [install_docker_start_service](defaults/main.yml#L17)   | bool | `True` |    false  |  Start Docker service |
+| [install_docker_data_dir](defaults/main.yml#L24)   | str | `/var/lib/docker` |    false  |  Docker data directory |
+| [install_docker_users](defaults/main.yml#L31)   | list | `[]` |    false  |  Additional Docker group users |
+| [install_docker_daemon_options](defaults/main.yml#L38)   | dict | `{}` |    false  |  Docker daemon options |
+| [install_docker_python_packages](defaults/main.yml#L45)   | bool | `False` |    false  |  Install Docker Python packages |
+| [install_docker_compose](defaults/main.yml#L52)   | bool | `False` |    false  |  Install Docker Compose |
+| [install_docker_compose_version](defaults/main.yml#L59)   | str | `latest` |    false  |  Docker Compose version |
+| [install_docker_install_completion](defaults/main.yml#L66)   | bool | `True` |    false  |  Install shell completions |
+| [install_docker_completion_shell](defaults/main.yml#L73)   | NoneType | `None` |    false  |  Shell type for completion |
 <details>
 <summary><b>🖇️ Full descriptions for vars in defaults/main.yml</b></summary>
 <br>
@@ -82,34 +76,34 @@ Leave empty to disable or auto-detect based on user shell environment.<br></td><
 
 | Var          | Type         | Value       |Required    | Title       |
 |--------------|--------------|-------------|------------|-------------|
-| [install_docker_binary_path](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L7)   | str | `/usr/local/bin` |    false  |  Docker binary installation path |
-| [install_docker_compose_path](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L12)   | str | `{{ install_docker_binary_path }}/docker-compose` |    false  |  Docker Compose binary path |
-| [install_docker_user](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L17)   | str | `root` |    false  |  Owner user for Docker files |
-| [install_docker_group](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L22)   | str | `docker` |    false  |  Docker system group |
-| [install_docker_daemon_dir](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L27)   | str | `/etc/docker` |    false  |  Docker daemon config directory |
-| [install_docker_service_list](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L32)   | list | `[]` |    false  |  Docker-related system services |
-| [install_docker_service_list.**0**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L33)   | str | `containerd` |    None  |  None |
-| [install_docker_service_list.**1**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L34)   | str | `docker` |    None  |  None |
-| [install_docker_socket_list](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L39)   | list | `[]` |    false  |  Docker-related Unix sockets |
-| [install_docker_socket_list.**0**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L39)   | str | `docker` |    false  |  Docker-related Unix sockets |
-| [install_docker_architecture_map](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L45)   | dict | `{}` |    false  |  Docker architecture mapping |
-| [install_docker_architecture_map.**armv7l**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L46)   | str | `armhf` |    None  |  None |
-| [install_docker_architecture_map.**armv6l**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L47)   | str | `armhf` |    None  |  None |
-| [install_docker_python_packages_list](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L52)   | list | `[]` |    false  |  Python packages for Docker support |
-| [install_docker_python_packages_list.**0**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L53)   | dict | `{}` |    None  |  None |
-| [install_docker_python_packages_list.0.**name**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L53)   | str | `python3-docker` |    None  |  None |
-| [install_docker_python_packages_list.0.**version**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L54)   | str | `latest` |    None  |  None |
-| [install_docker_python_packages_list.0.**state**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L55)   | str | `present` |    None  |  None |
-| [install_docker_sysctl_entries](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L60)   | dict | `{}` |    false  |  Docker-related sysctl entries |
-| [install_docker_sysctl_entries.net.bridge.**bridge-nf-call-iptables**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L61)   | int | `1` |    None  |  None |
-| [install_docker_sysctl_entries.net.bridge.**bridge-nf-call-ip6tables**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L62)   | int | `1` |    None  |  None |
-| [install_docker_modprobe_modules](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L67)   | list | `[]` |    false  |  Kernel modules for Docker |
-| [install_docker_modprobe_modules.**0**](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L68)   | str | `br_netfilter` |    None  |  None |
-| [install_docker_github_api](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L73)   | str | `https://api.github.com/repos` |    false  |  GitHub API base URL |
-| [install_docker_github_url](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L78)   | str | `https://github.com` |    false  |  GitHub base URL |
-| [install_docker_github_project](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L83)   | str | `moby/moby` |    false  |  GitHub project for Docker |
-| [install_docker_repository_url](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L88)   | str | `https://download.docker.com/linux/static/stable/{{ install_docker_architecture_map[ansible_architecture]¦default(ansible_architecture) }}` |    false  |  Docker release repository URL |
-| [install_docker_compose_github_project](https://git.ednz.fr:5022/ansible-collections/ednz_cloud.utils/roles/install_docker/vars/main.yml#L93)   | str | `docker/compose` |    false  |  GitHub project for Docker Compose |
+| [install_docker_binary_path](vars/main.yml#L7)   | str | `/usr/local/bin` |    false  |  Docker binary installation path |
+| [install_docker_compose_path](vars/main.yml#L12)   | str | `{{ install_docker_binary_path }}/docker-compose` |    false  |  Docker Compose binary path |
+| [install_docker_user](vars/main.yml#L17)   | str | `root` |    false  |  Owner user for Docker files |
+| [install_docker_group](vars/main.yml#L22)   | str | `docker` |    false  |  Docker system group |
+| [install_docker_daemon_dir](vars/main.yml#L27)   | str | `/etc/docker` |    false  |  Docker daemon config directory |
+| [install_docker_service_list](vars/main.yml#L32)   | list | `[]` |    false  |  Docker-related system services |
+| [install_docker_service_list.**0**](vars/main.yml#L33)   | str | `containerd` |    None  |  None |
+| [install_docker_service_list.**1**](vars/main.yml#L34)   | str | `docker` |    None  |  None |
+| [install_docker_socket_list](vars/main.yml#L39)   | list | `[]` |    false  |  Docker-related Unix sockets |
+| [install_docker_socket_list.**0**](vars/main.yml#L39)   | str | `docker` |    false  |  Docker-related Unix sockets |
+| [install_docker_architecture_map](vars/main.yml#L45)   | dict | `{}` |    false  |  Docker architecture mapping |
+| [install_docker_architecture_map.**armv7l**](vars/main.yml#L46)   | str | `armhf` |    None  |  None |
+| [install_docker_architecture_map.**armv6l**](vars/main.yml#L47)   | str | `armhf` |    None  |  None |
+| [install_docker_python_packages_list](vars/main.yml#L52)   | list | `[]` |    false  |  Python packages for Docker support |
+| [install_docker_python_packages_list.**0**](vars/main.yml#L53)   | dict | `{}` |    None  |  None |
+| [install_docker_python_packages_list.0.**name**](vars/main.yml#L53)   | str | `python3-docker` |    None  |  None |
+| [install_docker_python_packages_list.0.**version**](vars/main.yml#L54)   | str | `latest` |    None  |  None |
+| [install_docker_python_packages_list.0.**state**](vars/main.yml#L55)   | str | `present` |    None  |  None |
+| [install_docker_sysctl_entries](vars/main.yml#L60)   | dict | `{}` |    false  |  Docker-related sysctl entries |
+| [install_docker_sysctl_entries.net.bridge.**bridge-nf-call-iptables**](vars/main.yml#L61)   | int | `1` |    None  |  None |
+| [install_docker_sysctl_entries.net.bridge.**bridge-nf-call-ip6tables**](vars/main.yml#L62)   | int | `1` |    None  |  None |
+| [install_docker_modprobe_modules](vars/main.yml#L67)   | list | `[]` |    false  |  Kernel modules for Docker |
+| [install_docker_modprobe_modules.**0**](vars/main.yml#L68)   | str | `br_netfilter` |    None  |  None |
+| [install_docker_github_api](vars/main.yml#L73)   | str | `https://api.github.com/repos` |    false  |  GitHub API base URL |
+| [install_docker_github_url](vars/main.yml#L78)   | str | `https://github.com` |    false  |  GitHub base URL |
+| [install_docker_github_project](vars/main.yml#L83)   | str | `moby/moby` |    false  |  GitHub project for Docker |
+| [install_docker_repository_url](vars/main.yml#L88)   | str | `https://download.docker.com/linux/static/stable/{{ install_docker_architecture_map[ansible_architecture]¦default(ansible_architecture) }}` |    false  |  Docker release repository URL |
+| [install_docker_compose_github_project](vars/main.yml#L93)   | str | `docker/compose` |    false  |  GitHub project for Docker Compose |
 <details>
 <summary><b>🖇️ Full Descriptions for vars in vars/main.yml</b></summary>
 <br>

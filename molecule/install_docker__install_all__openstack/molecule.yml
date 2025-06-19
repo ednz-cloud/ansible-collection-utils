@@ -36,7 +36,7 @@ provisioner:
 verifier:
   name: ansible
 scenario:
-  name: molecule__install_docker__install_all__openstack
+  name: install_docker__install_all__openstack
   test_sequence:
     - dependency
     - cleanup
