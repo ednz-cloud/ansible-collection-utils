@@ -1,4 +1,0 @@
-requests==7.6.1
-pytest
-pytest-xdist
-coverage
