@@ -42,7 +42,7 @@ jobs:
           pip3 install "ansible-core==${{ matrix.ansible-version }}"
 
       - name: Install requirements
-        run: pip3 install -r tests/requirements.txt
+        run: pip3 install -r tests/requirements-${{ matrix.ansible-version }}.txt
         shell: bash
         working-directory: ${{ gitea.workspace }}
 
