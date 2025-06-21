@@ -41,10 +41,16 @@ jobs:
         run: |
           pip3 install "ansible-core==${{ matrix.ansible-version }}"
 
-      # - name: Install requirements
-      #   run: pip3 install -r tests/requirements-${{ matrix.ansible-version }}.txt
-      #   shell: bash
-      #   working-directory: ${{ gitea.workspace }}
+      - name: Install requirements (if available)
+        run: |
+          REQ_FILE="tests/requirements-${{ matrix.ansible-version }}.txt"
+          if [ -f "$REQ_FILE" ]; then
+            pip3 install -r "$REQ_FILE"
+          else
+            echo "No requirements file found for $REQ_FILE. Skipping."
+          fi
+        shell: bash
+        working-directory: ${{ gitea.workspace }}
 
       - name: Setup testing environment
         run: ansible-galaxy collection install ${{ gitea.workspace }}
