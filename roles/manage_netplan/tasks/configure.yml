@@ -1,0 +1,25 @@
+---
+# task/configure file for manage_netplan
+- name: "Netplan | Copy netplan configuration template into {{ manage_netplan_config_file }}"
+  ansible.builtin.template:
+    src: netplan.yaml.j2
+    dest: "{{ manage_netplan_config_file }}"
+    mode: "0600"
+    owner: root
+    group: root
+    backup: true
+  when: manage_netplan_configuration
+  register: _manage_netplan_configuration
+
+- name: "Netplan | Set generate-check and apply-check variables"
+  vars:
+    _manage_netplan_valid_config_path: >-
+      {{
+        (_manage_netplan_configuration.dest | dirname) is ansible.builtin.regex('^/etc/netplan.*')
+      }}
+  ansible.builtin.set_fact:
+    _manage_netplan_need_generate: "{{ _manage_netplan_valid_config_path }}"
+    _manage_netplan_need_apply: "{{ _manage_netplan_valid_config_path}}"
+  when:
+    - _manage_netplan_configuration is defined
+    - _manage_netplan_configuration.changed

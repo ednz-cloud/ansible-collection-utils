@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+{%- set updated_network = manage_netplan_configuration.network | combine({'renderer': manage_netplan_renderer}) -%}
+{% set updated_config = manage_netplan_configuration | combine({'network': updated_network}) %}
+
+{{ updated_config | to_nice_yaml(indent=2, width=80) }}

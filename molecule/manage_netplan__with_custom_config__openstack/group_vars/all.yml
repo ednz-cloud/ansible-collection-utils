@@ -1,0 +1,32 @@
+---
+manage_netplan_config_file: /tmp/ansible-config.yaml
+manage_netplan_renderer: networkd
+manage_netplan_remove_existing: false
+manage_netplan_install: true
+manage_netplan_apply: false
+manage_netplan_configuration:
+  network:
+    version: 2
+    ethernets:
+      eth1:
+        dhcp4: false
+        link-local: []
+        set-name: eth1
+      eth2:
+        dhcp4: true
+        mtu: 1500
+        link-local: []
+        set-name: eth2
+    vlans:
+      vlan20:
+        id: 20
+        link: eth1
+        mtu: 1500
+        dhcp4: false
+        link-local: []
+      vlan40:
+        id: 40
+        link: eth1
+        mtu: 1500
+        dhcp4: false
+        link-local: []

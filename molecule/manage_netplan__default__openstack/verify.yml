@@ -1,0 +1,27 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test: directory /etc/netplan"
+      block:
+        - name: "Stat directory /etc/netplan"
+          ansible.builtin.stat:
+            path: "/etc/netplan"
+          register: stat_etc_netplan
+
+        - name: "Stat file /etc/netplan/ansible-config.yaml"
+          ansible.builtin.stat:
+            path: "/etc/netplan/ansible-config.yaml"
+          register: stat_etc_netplan_ansible_config_yml
+
+        - name: "Verify directory /etc/netplan"
+          ansible.builtin.assert:
+            that:
+              - stat_etc_netplan.stat.exists
+              - stat_etc_netplan.stat.isdir
+              - stat_etc_netplan.stat.pw_name == 'root'
+              - stat_etc_netplan.stat.gr_name == 'root'
+              - stat_etc_netplan.stat.mode == '0755'
+              - not stat_etc_netplan_ansible_config_yml.stat.exists
