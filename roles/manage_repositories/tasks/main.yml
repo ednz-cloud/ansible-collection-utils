@@ -1,0 +1,26 @@
+---
+# task/main file for manage_repositories
+- name: "APT Repo | Set cache-update variable"
+  ansible.builtin.set_fact:
+    _manage_repositories_need_cache_update: false
+
+- name: "APT Repo | Load variables"
+  ansible.builtin.include_vars:
+    file: "{{ ansible_distribution|lower }}.yml"
+
+- name: "APT Repo | Import prerequisites.yml"
+  ansible.builtin.include_tasks: prerequisites.yml
+
+- name: "APT Repo | Import main repositories for {{ ansible_distribution|lower }}"
+  ansible.builtin.include_tasks: "main_repositories.yml"
+  when: manage_repositories_enable_default_repo
+
+- name: "APT Repo | Import custom_repositories.yml"
+  ansible.builtin.include_tasks: custom_repositories.yml
+  when: manage_repositories_enable_custom_repo
+
+- name: "APT Repo | Update apt caches"
+  ansible.builtin.apt:
+    update_cache: true
+  when:
+    - _manage_repositories_need_cache_update

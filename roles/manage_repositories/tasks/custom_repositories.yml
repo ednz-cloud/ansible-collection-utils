@@ -1,0 +1,17 @@
+---
+- name: "APT Repo | Configure custom repositories"
+  ansible.builtin.deb822_repository:
+    name: "{{ item.name }}"
+    types: "{{ item.types }}"
+    uris: "{{ item.uri }}"
+    suites: "{{ item.suites | join(' ') }}"
+    components: "{{ item.components }}"
+    signed_by: "{{ item.signed_by | default(omit) }}"
+  loop: "{{ manage_repositories_custom_repo }}"
+  register: _apt_custom_repositories
+
+- name: "APT Repo | Set cache-update variable"
+  ansible.builtin.set_fact:
+    _manage_repositories_need_cache_update: true
+  when:
+    - _apt_custom_repositories.changed # noqa: no-handler
