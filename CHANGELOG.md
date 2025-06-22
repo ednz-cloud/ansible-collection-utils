@@ -1,3 +1,9 @@
+## v0.3.0 (2025-06-22)
+
+### Feat
+
+- **roles**: add manage_netplan role
+
 ## v0.2.0 (2025-06-22)
 
 ### Feat
