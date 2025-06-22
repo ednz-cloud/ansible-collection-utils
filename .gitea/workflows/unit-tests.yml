@@ -8,6 +8,9 @@ on:
       - synchronize
     branches:
       - main
+    paths:
+      - plugins/**
+      - tests/**
 
 jobs:
   unit_tests:
