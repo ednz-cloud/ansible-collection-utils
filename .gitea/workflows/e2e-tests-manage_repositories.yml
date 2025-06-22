@@ -9,9 +9,9 @@ on:
     branches:
       - main
     paths:
-      - .gitea/workflows/e2e-tests-manage_netplan.yml
-      - roles/manage_netplan/**
-      - molecule/manage_netplan__**
+      - .gitea/workflows/e2e-tests-manage_repositories.yml
+      - roles/manage_repositories/**
+      - molecule/manage_repositories__**
 
 jobs:
   retrieve-credentials:
