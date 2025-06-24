@@ -1,3 +1,9 @@
+## v0.4.0 (2025-06-24)
+
+### Feat
+
+- **roles**: add manage_repositories role
+
 ## v0.3.0 (2025-06-22)
 
 ### Feat
