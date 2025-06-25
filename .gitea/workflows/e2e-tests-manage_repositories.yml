@@ -1,5 +1,5 @@
 ---
-name: end-to-end-tests-manage_netplan
+name: end-to-end-tests-manage_repositories
 on:
   pull_request:
     types:
