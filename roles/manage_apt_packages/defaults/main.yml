@@ -1,0 +1,15 @@
+---
+# defaults file for manage_apt_packages
+
+# title: List of packages to manage
+# required: false
+# description-lines:
+# List of packages to manage with
+# This list is used to install, update, or remove packages.
+# Each item should be a dictionary with keys:
+# - name: Name of the package (e.g., 'nginx')
+# - version: Version to install (optional, default is 'latest')
+# - state: Desired state of the package (e.g., 'present', 'absent', 'latest')
+# If 'version' is not specified, the latest version will be installed.
+# If 'state' is not specified, it defaults to 'present'.
+manage_apt_packages_list: []
