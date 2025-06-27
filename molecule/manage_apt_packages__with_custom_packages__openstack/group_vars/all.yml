@@ -3,8 +3,8 @@ manage_apt_packages_list:
   - name: mariadb-server
   - name: apache2
     state: present
-  - name: consul
-    version: 1.13.1-1
+  - name: docker-ce
+    version: 5:27.0.3-1~ubuntu.20.04~focal
   - name: jq
     state: absent
   - name: vim
