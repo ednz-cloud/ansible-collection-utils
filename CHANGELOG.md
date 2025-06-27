@@ -1,3 +1,13 @@
+## v0.5.0 (2025-06-27)
+
+### Feat
+
+- **roles**: add manage_apt_packages roles
+
+### Fix
+
+- **roles**: add documentation for manage_apt_packages role
+
 ## v0.4.0 (2025-06-24)
 
 ### Feat
