@@ -3,8 +3,8 @@
   hosts: all
   become: true
   tasks:
-    - name: "Install docker"
+    - name: "Include ednz_cloud.utils.install_docker"
       ansible.builtin.include_role:
-        name: ednz_cloud.install_docker
+        name: ednz_cloud.utils.install_docker
       vars:
         install_docker_python_packages: true
