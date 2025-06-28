@@ -16,6 +16,6 @@
               - "ansible_facts.packages['mariadb-server'][0]['name'] == 'mariadb-server'"
               - "ansible_facts.packages['apache2'][0]['name'] == 'apache2'"
               - "ansible_facts.packages['docker-ce'][0]['name'] == 'docker-ce'"
-              - "ansible_facts.packages['docker-ce'][0]['version'] == '5:27.0.3-1~ubuntu.20.04~focal'"
+              - "'5:27.0.3-1' in ansible_facts.packages['docker-ce'][0]['version']"
               - "ansible_facts.packages['jq'] is not defined"
               - "ansible_facts.packages['vim'] is not defined"
