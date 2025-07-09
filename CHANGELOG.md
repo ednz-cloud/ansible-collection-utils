@@ -1,3 +1,9 @@
+## v0.6.0 (2025-07-09)
+
+### Feat
+
+- **roles**: add manage_pip_packages roles
+
 ## v0.5.0 (2025-06-27)
 
 ### Feat
