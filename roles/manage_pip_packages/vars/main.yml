@@ -1,0 +1,39 @@
+---
+# vars file for manage_pip_packages
+
+# title: Required system packages
+# required: true
+# description-lines:
+# List of system-level packages required to install and manage pip.
+# These packages will be installed before managing any pip packages.
+manage_pip_packages_required_packages:
+  - name: python3
+    version: latest
+    state: present
+  - name: python3-pip
+    version: latest
+    state: present
+
+# title: Virtual environment packages
+# required: true
+# description-lines:
+# List of packages required to support virtual environment creation.
+# Only installed if 'manage_pip_packages_create_venv' is true.
+manage_pip_packages_venv_required_packages:
+  - name: python3-venv
+    version: latest
+    state: present
+
+# title: Python binary path in virtual environment
+# required: false
+# description-lines:
+# Path to the Python interpreter within the created virtual environment.
+# Used when installing packages inside the venv.
+manage_pip_packages_venv_python_path: "{{ manage_pip_packages_venv_path }}/bin/python3"
+
+# title: Virtual environment creation command
+# required: false
+# description-lines:
+# Command used to create the virtual environment.
+# Defaults to using the current Python interpreter with the '-m venv' module.
+manage_pip_packages_venv_command: "{{ ansible_python_interpreter | default('/usr/bin/python3') }} -m venv"

@@ -1,0 +1,46 @@
+---
+# defaults file for manage_pip_packages
+
+# title: Install prerequisites
+# required: false
+# description-lines:
+# Determines whether prerequisite system packages (like Python, pip) should be installed.
+# Set to true to ensure the system can install and manage pip packages.
+manage_pip_packages_install_prereqs: true
+
+# title: List of pip packages to manage
+# required: false
+# description-lines:
+# List of pip packages to install, uninstall, or ensure are at specific versions.
+# Each entry should be a dictionary with the keys: 'name', 'version_constraint', and 'state'.
+# 'version_constraint' can be a specific version or 'latest'.
+# 'state' can be 'present', 'absent', or 'latest'.
+manage_pip_packages_list: []
+
+# title: Break system packages
+# required: false
+# description-lines:
+# If true, allows pip to install packages even if it might overwrite or conflict with system packages.
+# Useful in some cases but should be used with caution.
+manage_pip_packages_break_system_packages: false
+
+# title: Create a virtual environment
+# required: false
+# description-lines:
+# Whether to create and use a Python virtual environment for package installation.
+# This helps isolate package installations from the system Python environment.
+manage_pip_packages_create_venv: false
+
+# title: Virtual environment path
+# required: false
+# description-lines:
+# Filesystem path to create the virtual environment in.
+# Used only if 'manage_pip_packages_create_venv' is true.
+manage_pip_packages_venv_path: /tmp/venv
+
+# title: Inherit global site packages
+# required: false
+# description-lines:
+# Determines whether the virtual environment should have access to global site-packages.
+# Set to true to allow the virtual environment to see globally installed packages.
+manage_pip_packages_venv_inherit_global: false
