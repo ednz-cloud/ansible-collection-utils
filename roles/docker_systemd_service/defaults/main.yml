@@ -86,3 +86,13 @@ docker_systemd_service_systemd_install_options: {}
 # If false, the service will be enabled, but not started.
 # This allows for manual start control after deployment.
 docker_systemd_service_start: true
+
+# title: Action to perform
+# required: false
+# description-lines:
+# Specifies the action to perform with the systemd service.
+# Options include 'install', 'uninstall'.
+# Default is 'install', which sets up the service.
+# 'uninstall' will remove the service and its associated files.
+# This is useful for cleanup or redeployment scenarios.
+docker_systemd_service_action: install
