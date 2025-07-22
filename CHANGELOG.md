@@ -1,3 +1,10 @@
+## v0.7.0 (2025-07-22)
+
+### Feat
+
+- **roles/docker_systemd_service**: add extra_file option to track config files for container services
+- **roles/docker_systemd_service**: add option to uninstall a service
+
 ## v0.6.0 (2025-07-09)
 
 ### Feat
