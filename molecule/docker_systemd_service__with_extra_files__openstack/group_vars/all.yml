@@ -11,5 +11,17 @@ docker_systemd_service_systemd_unit_options: {}
 docker_systemd_service_systemd_service_options: {}
 docker_systemd_service_systemd_install_options: {}
 docker_systemd_service_start: true
-docker_systemd_service_extra_files: []
+docker_systemd_service_extra_files:
+  - src: "{{ playbook_dir }}/files/file.yml"
+    dest: "/opt/files/file.yml"
+    mode: "0644"
+    owner: root
+    group: root
+    on_change: reload
+  - src: "{{ playbook_dir }}/files/dir"
+    dest: "/opt/files/dir"
+    mode: "0644"
+    owner: root
+    group: root
+    on_change: restart
 docker_systemd_service_action: install

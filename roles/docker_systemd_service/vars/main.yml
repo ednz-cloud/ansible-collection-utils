@@ -15,13 +15,6 @@ docker_systemd_service_sysconf_dir: /etc/default
 # Adjust if using a non-standard Docker installation.
 docker_systemd_service_docker_path: "/usr/bin/docker"
 
-# title: Default ExecStart override
-# required: false
-# description-lines:
-# Placeholder for a custom ExecStart command.
-# This can be used to fully override the Docker run command.
-docker_systemd_service_exec_start_default: >-
-
 # title: Default systemd unit options
 # required: false
 # description-lines:
@@ -48,6 +41,7 @@ docker_systemd_service_systemd_service_options_default:
     {{ (docker_systemd_service_flags | ednz_cloud.utils.to_cli_flags(multiline=true, trailing_backslash=true)) -}}{% if docker_systemd_service_flags +%}
     {% endif %}{{ docker_systemd_service_image }}{% if docker_systemd_service_container_cmd %} {{ docker_systemd_service_container_cmd if docker_systemd_service_container_cmd is string else docker_systemd_service_container_cmd | join(" ") }}{% endif %}
   ExecStop: "{{ docker_systemd_service_docker_path }} stop {{ docker_systemd_service_container_name }}"
+  ExecReload: "{{ docker_systemd_service_docker_path }} kill --signal=SIGHUP {{ docker_systemd_service_container_name }}"
   Restart: always
   RestartSec: 10s
   SyslogIdentifier: "{{ docker_systemd_service_container_name }}"

@@ -56,6 +56,7 @@
 
               [Service]
               EnvironmentFile=/etc/default/nginx_container
+              ExecReload=/usr/local/bin/docker kill --signal=SIGHUP nginx
               ExecStart=/usr/local/bin/docker run --name nginx \
               --rm \
               --env-file /etc/default/nginx_container \

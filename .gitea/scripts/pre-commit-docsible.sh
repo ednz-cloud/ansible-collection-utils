@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-role_dirs=$(git diff --cached --name-only --diff-filter=ACM | grep '^roles/' || true | cut -d/ -f1-2 | sort -u)
+role_dirs=$(git diff --cached --name-only --diff-filter=ACM | (grep '^roles/' || true) | cut -d/ -f1-2 | sort -u)
 
 checked_roles=()
 

@@ -1,0 +1,12 @@
+---
+# requirements file for molecule
+roles:
+  - name: ednz_cloud.manage_repositories
+    src: https://github.com/ednz-cloud/manage_repositories.git
+    version: v0.2.0
+  - name: ednz_cloud.manage_apt_packages
+    src: https://github.com/ednz-cloud/manage_apt_packages.git
+    version: main
+  - name: ednz_cloud.install_docker
+    src: https://github.com/ednz-cloud/install_docker.git
+    version: v0.2.0

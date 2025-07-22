@@ -87,6 +87,25 @@ docker_systemd_service_systemd_install_options: {}
 # This allows for manual start control after deployment.
 docker_systemd_service_start: true
 
+# title: Extra files to copy
+# required: false
+# description-lines:
+# List of extra files to copy to te target host, that are required by the service.
+# Each item should be a dictionary like:
+#   - src: path/to/source/file
+#     dest: path/to/destination/file
+#     mode: '0644'  # Optional, default is '0644'
+#     owner: 'user'  # Optional, default is 'root'
+#     group: 'group'  # Optional, default is 'root'
+#     on_change: 'restart'  # Optional, can be 'restart' or 'reload', default is 'restart'
+# Sources can be any type of file, directory or jinja2 templates.
+# Destination should match the type of the source.
+# Jinja2 templates inside of a directory that would be copied over are also templated, and their .j2 extensions will be stripped out.
+# If the source is a directory, it will be copied recursively.
+# If the source is a file, it will be copied as is.
+# If the source is a jinja2 template, it will be rendered and copied to the destination.
+docker_systemd_service_extra_files: []
+
 # title: Action to perform
 # required: false
 # description-lines:

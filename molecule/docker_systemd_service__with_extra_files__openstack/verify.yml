@@ -81,3 +81,35 @@
               - ansible_facts.services['nginx_container.service']['source'] == 'systemd'
               - ansible_facts.services['nginx_container.service']['state'] == 'running'
               - ansible_facts.services['nginx_container.service']['status'] == 'enabled'
+
+    - name: "Test: files in /opt/files"
+      block:
+        - name: "Stat /opt/files"
+          ansible.builtin.stat:
+            path: "/opt/files"
+          register: stat_opt_files
+
+        - name: "Find all files in /opt/files"
+          ansible.builtin.find:
+            paths: "/opt/files"
+            recurse: yes
+            file_type: any
+          register: found_opt_files
+
+        - name: "Verify /opt/files directory and expected files"
+          vars:
+            expected_files:
+              - "/opt/files/file.yml"
+              - "/opt/files/dir"
+              - "/opt/files/dir/test1"
+              - "/opt/files/dir/test2.yml"
+              - "/opt/files/dir/test3.yml"
+              - "/opt/files/dir/dir1"
+              - "/opt/files/dir/dir1/file.yml"
+          ansible.builtin.assert:
+            that:
+              - stat_opt_files.stat.exists
+              - stat_opt_files.stat.isdir
+              - stat_opt_files.stat.pw_name == 'root'
+              - stat_opt_files.stat.gr_name == 'root'
+              - expected_files | difference(found_opt_files.files | map(attribute='path') | list) | length == 0

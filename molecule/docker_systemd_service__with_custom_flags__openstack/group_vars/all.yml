@@ -18,3 +18,5 @@ docker_systemd_service_systemd_unit_options:
 docker_systemd_service_systemd_service_options: {}
 docker_systemd_service_systemd_install_options: {}
 docker_systemd_service_start: true
+docker_systemd_service_extra_files: []
+docker_systemd_service_action: install
