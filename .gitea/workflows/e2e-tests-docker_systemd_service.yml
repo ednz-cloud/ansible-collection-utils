@@ -62,6 +62,7 @@ jobs:
         scenario:
           - docker_systemd_service__default__openstack
           - docker_systemd_service__with_custom_flags__openstack
+          - docker_systemd_service__with_extra_files__openstack
     steps:
       - name: Checkout
         uses: actions/checkout@v4
