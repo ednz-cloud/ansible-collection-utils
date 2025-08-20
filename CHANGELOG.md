@@ -1,3 +1,9 @@
+## v0.7.1 (2025-08-20)
+
+### Fix
+
+- **roles/manage_apt_packages**: adjust conditional on packages install
+
 ## v0.7.0 (2025-07-22)
 
 ### Feat
