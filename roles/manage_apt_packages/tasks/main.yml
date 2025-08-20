@@ -11,5 +11,5 @@
     state: "{{ item.state | default('present') }}"
     allow_downgrade: true
   loop: "{{ manage_apt_packages_list }}"
-  when: manage_apt_packages_list
+  when: manage_apt_packages_list | length > 0
   notify: "apt-autoremove"
