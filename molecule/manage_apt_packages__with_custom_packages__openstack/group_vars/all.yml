@@ -4,7 +4,7 @@ manage_apt_packages_list:
   - name: apache2
     state: present
   - name: docker-ce
-    version: 5:27.0.3-1*
+    version: 5:28.1.0-1*
   - name: jq
     state: absent
   - name: vim
