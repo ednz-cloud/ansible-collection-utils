@@ -225,8 +225,8 @@ license (BSD, MIT)
 
 #### Platforms
 
-- **Ubuntu**: ['focal', 'jammy', 'noble']
-- **Debian**: ['bullseye', 'bookworm']
+- **Ubuntu**: ['jammy', 'noble']
+- **Debian**: ['bookworm', 'trixie']
 
 
 #### Dependencies
