@@ -57,12 +57,12 @@ jobs:
             echo "No requirements file found for $REQ_FILE. Skipping."
           fi
         shell: bash
-        working-directory: ${{ gitea.workspace }}
+        working-directory: ${{ github.workspace }}
 
       - name: Setup testing environment
-        run: ansible-galaxy collection install ${{ gitea.workspace }}
+        run: ansible-galaxy collection install ${{ github.workspace }}
         shell: bash
-        working-directory: ${{ gitea.workspace }}
+        working-directory: ${{ github.workspace }}
 
       - name: Run ansible unit tests
         run: ansible-test units --coverage --python ${{ matrix.python-version }} --color yes
