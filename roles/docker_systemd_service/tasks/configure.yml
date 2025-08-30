@@ -45,7 +45,7 @@
   register: _docker_systemd_service_unit_file
 
 - name: "Docker systemd service | Copy extra configuration files"
-  when: docker_systemd_service_extra_files
+  when: docker_systemd_service_extra_files | length > 0
   block:
     - name: "Docker systemd service | Populate empty on_change list"
       ansible.builtin.set_fact:
