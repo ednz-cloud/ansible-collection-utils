@@ -1,3 +1,9 @@
+## v0.7.2 (2025-08-30)
+
+### Fix
+
+- **roles/docker_systemd_service**: adjust conditional for extra_files feature
+
 ## v0.7.1 (2025-08-20)
 
 ### Fix
