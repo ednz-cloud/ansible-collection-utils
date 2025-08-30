@@ -1,0 +1,37 @@
+---
+# task/main file for motd
+- name: "Import prerequisites.yml"
+  ansible.builtin.include_tasks: prerequisites.yml
+
+- name: "MOTD | Deploy ASCII logo script"
+  ansible.builtin.template:
+    src: "{{ motd_ascii_file_source }}"
+    dest: "{{ motd_directory_path }}/{{ motd_ascii_file }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "MOTD | Deploy system info script"
+  ansible.builtin.template:
+    src: "10-sysinfo.j2"
+    dest: "{{ motd_directory_path }}/{{ motd_sysinfo_file }}"
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "MOTD | Handle  production warning script"
+  block:
+    - name: "MOTD | Deploy production warning script"
+      ansible.builtin.template:
+        src: "99-production-warning.j2"
+        dest: "{{ motd_directory_path }}/{{ motd_production_warning_file }}"
+        owner: root
+        group: root
+        mode: "0755"
+      when: motd_production_warning
+
+    - name: "MOTD | Remove production warning script"
+      ansible.builtin.file:
+        path: "{{ motd_directory_path }}/{{ motd_production_warning_file }}"
+        state: absent
+      when: not motd_production_warning

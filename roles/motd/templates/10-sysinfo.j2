@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Colors
+BOLD="\033[1m"
+C0=$(printf '\033[0m')
+C1=$(printf '\033{{ motd_color_map[motd_sysinfo_color] }}')
+# Hostname & kernel
+HOSTNAME=$(cat /proc/sys/kernel/hostname)
+KERNEL=$(uname -r 2>/dev/null || awk '{print $3}' /proc/version)
+ARCH=$(uname -m 2>/dev/null || echo "?")
+
+# CPU info
+CPU_MODEL=$(awk -F: '/model name/ {print $2; exit}' /proc/cpuinfo | sed 's/^ //')
+CPU_CORES=$(grep -c ^processor /proc/cpuinfo)
+CPU_FREQ=$(awk -F: '/cpu MHz/ {printf "%.0f MHz\n", $2; exit}' /proc/cpuinfo | sed 's/^ //')
+
+# Uptime (strip decimals!)
+UPTIME_SEC=$(cut -d' ' -f1 < /proc/uptime | cut -d. -f1)
+UP_DAYS=$(( UPTIME_SEC/86400 ))
+UP_HOURS=$(( (UPTIME_SEC%86400)/3600 ))
+UP_MIN=$(( (UPTIME_SEC%3600)/60 ))
+
+# Load average
+LOAD=$(cut -d' ' -f1-3 < /proc/loadavg)
+LOAD_STR="$LOAD (1m, 5m, 15m)"
+
+# Memory (MB)
+MEM_TOTAL=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+MEM_AVAIL=$(awk '/MemAvailable/ {print $2}' /proc/meminfo)
+MEM_USED=$(( MEM_TOTAL - MEM_AVAIL ))
+MEM_STR="$(( MEM_USED/1024 ))M / $(( MEM_TOTAL/1024 ))M"
+
+# Disk usage (root fs, in MB + device)
+eval $(stat -f --format="BS=%s BFREE=%a BTOTAL=%b" / 2>/dev/null || echo "BS=0 BFREE=0 BTOTAL=0")
+ROOTDEV=$(awk '$2=="/"{print $1}' /proc/mounts | head -n1)
+
+if [ "$BS" -gt 0 ]; then
+  DFREE=$((BFREE*BS/1024/1024))
+  DTOTAL=$((BTOTAL*BS/1024/1024))
+  DUSED=$((DTOTAL-DFREE))
+  DISK_STR="${DUSED}M / ${DTOTAL}M ($ROOTDEV)"
+else
+  DISK_STR="?"
+fi
+
+# Output
+echo "-----------------------------------------------"
+printf "%b%-8s:%b %s\n" "$C1$BOLD" "Host" "$C0" "$HOSTNAME"
+printf "%b%-8s:%b %s (%s)\n" "$C1$BOLD" "Kernel" "$C0" "$KERNEL" "$ARCH"
+printf "%b%-8s:%b %sd %sh %sm\n" "$C1$BOLD" "Uptime" "$C0" "$UP_DAYS" "$UP_HOURS" "$UP_MIN"
+printf "%b%-8s:%b %s (%d cores, %s)\n" "$C1$BOLD" "CPU" "$C0" "$CPU_MODEL" "$CPU_CORES" "$CPU_FREQ"
+printf "%b%-8s:%b %s\n" "$C1$BOLD" "Load" "$C0" "$LOAD_STR"
+printf "%b%-8s:%b %s\n" "$C1$BOLD" "Memory" "$C0" "$MEM_STR"
+printf "%b%-8s:%b %s\n" "$C1$BOLD" "Disk" "$C0" "$DISK_STR"
+echo "-----------------------------------------------"

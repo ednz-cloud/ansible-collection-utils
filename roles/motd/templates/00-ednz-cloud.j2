@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Colors
+C0="\033[0m"
+C1=$(printf '\033{{ motd_color_map['white'] }}')
+C2=$(printf '\033{{ motd_color_map[motd_sysinfo_color] }}')  # color for center line
+
+# ASCII art
+ASCII_ART=$(cat <<'EOF'
+███████ ██████  ███    ██ ███████        ██████ ██       ██████  ██    ██ ██████
+██      ██   ██ ████   ██    ███        ██      ██      ██    ██ ██    ██ ██   ██
+█████   ██   ██ ██ ██  ██   ███   █████ ██      ██      ██    ██ ██    ██ ██   ██
+██      ██   ██ ██  ██ ██  ███          ██      ██      ██    ██ ██    ██ ██   ██
+███████ ██████  ██   ████ ███████        ██████ ███████  ██████   ██████  ██████
+EOF
+)
+
+# Print line by line, coloring the middle one
+LINE_NO=0
+TOTAL_LINES=$(echo "$ASCII_ART" | wc -l)
+MIDDLE=$((TOTAL_LINES / 2 + 1))
+
+echo "$ASCII_ART" | while IFS= read -r line; do
+  LINE_NO=$((LINE_NO + 1))
+  if [ "$LINE_NO" -eq "$MIDDLE" ]; then
+    printf "%b%s%b\n" "$C2" "$line" "$C0"
+  else
+    printf "%s\n" "$line"
+  fi
+done
