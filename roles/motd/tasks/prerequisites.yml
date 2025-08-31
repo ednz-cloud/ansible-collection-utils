@@ -8,9 +8,9 @@
     group: root
     mode: "0755"
 
-- name: "Ensure no other files are in motd"
+- name: "MOTD | Ensure no other files are in motd"
   block:
-    - name: "Collect files in motd dir"
+    - name: "MOTD | Collect files in motd dir"
       ansible.builtin.find:
         paths: "{{ motd_directory_path }}/"
         hidden: true
@@ -18,7 +18,7 @@
         file_type: any
       register: _motd_collected_files
 
-    - name: "Collect dir in motd dir"
+    - name: "MOTD | Collect dir in motd dir"
       ansible.builtin.find:
         paths: "{{ motd_directory_path }}/"
         hidden: true
@@ -26,14 +26,14 @@
         file_type: directory
       register: _motd_collected_directories
 
-    - name: "Remove all unwanted files and directories"
+    - name: "MOTD | Remove all unwanted files and directories"
       ansible.builtin.file:
         path: "{{ item.path }}"
         state: absent
       loop: "{{ _motd_collected_files.files + _motd_collected_directories.files }}"
       when: (item.path|basename) not in motd_filenames
 
-- name: "Remove /etc/motd file"
+- name: "MOTD | Remove /etc/motd file"
   ansible.builtin.file:
     path: "/etc/motd"
     state: absent

@@ -1,12 +1,49 @@
 ---
 # vars file for motd
+
+# title: motd directory path
+# required: false
+# description-lines:
+# Path to the directory where the MOTD scripts are stored.
+# Default is /etc/update-motd.d
 motd_directory_path: /etc/update-motd.d
+
+# title: motd ascii file
+# required: false
+# description-lines:
+# Filename for the ASCII logo script in the MOTD on the target system.
+# Default is 00-ascii-logo
 motd_ascii_file: 00-ascii-logo
+
+# title: motd sysinfo file
+# required: false
+# description-lines:
+# Filename for the system information script in the MOTD on the target system.
+# Default is 10-sysinfo
 motd_sysinfo_file: 10-sysinfo
+
+# title: motd production warning file
+# required: false
+# description-lines:
+# Filename for the production warning script in the MOTD on the target system.
+# Default is 99-production-warning
 motd_production_warning_file: 99-production-warning
+
+# title: motd filenames
+# required: false
+# description-lines:
+# List of filenames to manage in the MOTD directory.
+# This is derived from the individual filename variables.
 motd_filenames:
   - "{{ motd_ascii_file }}"
   - "{{ motd_sysinfo_file }}"
+  - "{{ motd_production_warning_file }}"
+
+# title: motd color map
+# required: false
+# description-lines:
+# Mapping of color names to ANSI color codes for use in the MOTD.
+# This is used to set the color of the system information in the MOTD.
 motd_color_map:
   black: "[0;30m"
   red: "[0;31m"

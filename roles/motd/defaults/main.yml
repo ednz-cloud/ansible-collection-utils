@@ -1,5 +1,24 @@
 ---
 # defaults file for motd
+
+# title: motd ascii logo source file
+# required: false
+# description-lines:
+# Template file to use as the source for the ASCII logo displayed in the MOTD.
+# This can should be a Jinja2 template.
 motd_ascii_file_source: 00-ednz-cloud.j2
+
+# title: motd sysinfo color
+# required: false
+# description-lines:
+# Color to use for the system information in the MOTD.
+# Valid colors are: black, red, green, yellow, blue, purple, cyan,
+# light_cyan, white
 motd_sysinfo_color: green
+
+# title: motd production warning
+# required: false
+# description-lines:
+# Whether to display a production warning in the MOTD.
+# This is useful for production systems to remind users to be careful.
 motd_production_warning: false
