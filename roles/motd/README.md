@@ -6,8 +6,8 @@
 
 
 
+Description: Simple role to configure a Message Of The Day (MOTD) with ASCII logo and system information.
 
-Description: Not available.
 
 | Field                | Value           |
 |--------------------- |-----------------|
@@ -126,6 +126,21 @@ This is used to set the color of the system information in the MOTD.<br></td></t
 
 
 
+## Author Information
+Bertrand Lanson
+
+#### License
+
+license (BSD, MIT)
+
+#### Minimum Ansible Version
+
+2.10
+
+#### Platforms
+
+- **Ubuntu**: ['jammy', 'noble']
+- **Debian**: ['bookworm', 'trixie']
 
 
 #### Dependencies

@@ -1,2 +1,27 @@
 ---
 # meta file for motd
+galaxy_info:
+  namespace: "ednz_cloud"
+  role_name: "motd"
+  author: "Bertrand Lanson"
+  description: "Simple role to configure a Message Of The Day (MOTD) with ASCII logo and system information."
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+  galaxy_tags:
+    - "ubuntu"
+    - "debian"
+    - "docker"
+    - "container"
+    - "compose"
+    - "containerd"
+
+dependencies: []

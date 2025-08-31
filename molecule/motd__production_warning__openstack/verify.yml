@@ -1,0 +1,173 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test: directory /etc/update-motd.d"
+      block:
+        - name: "Stat directory /etc/update-motd.d"
+          ansible.builtin.stat:
+            path: "/etc/update-motd.d"
+          register: stat_etc_update_motd_d
+
+        - name: "Verify file /etc/update-motd.d"
+          ansible.builtin.assert:
+            that:
+              - stat_etc_update_motd_d.stat.exists
+              - stat_etc_update_motd_d.stat.isdir
+              - stat_etc_update_motd_d.stat.pw_name == 'root'
+              - stat_etc_update_motd_d.stat.gr_name == 'root'
+              - stat_etc_update_motd_d.stat.mode == '0755'
+
+    - name: "Test: files in /etc/update-motd.d"
+      block:
+        - name: "Stat file /etc/update-motd.d/00-ascii-logo"
+          ansible.builtin.stat:
+            path: "/etc/update-motd.d/00-ascii-logo"
+          register: stat_etc_update_motd_d_files_00_ascii_logo
+
+        - name: "Stat files in /etc/update-motd.d/10-sysinfo"
+          ansible.builtin.stat:
+            path: "/etc/update-motd.d/10-sysinfo"
+          register: stat_etc_update_motd_d_files_10_sysinfo
+
+        - name: "Stat file /etc/update-motd.d/99-production-warning"
+          ansible.builtin.stat:
+            path: "/etc/update-motd.d/99-production-warning"
+          register: stat_etc_update_motd_d_files_99_production_warning
+
+        - name: "Slurp file /etc/update-motd.d/00-ascii-logo"
+          ansible.builtin.slurp:
+            src: "/etc/update-motd.d/00-ascii-logo"
+          register: slurp_etc_update_motd_d_files_00_ascii_logo
+
+        - name: "Slurp file /etc/update-motd.d/10-sysinfo"
+          ansible.builtin.slurp:
+            src: "/etc/update-motd.d/10-sysinfo"
+          register: slurp_etc_update_motd_d_files_10_sysinfo
+
+        - name: "Slurp file /etc/update-motd.d/99-production-warning"
+          ansible.builtin.slurp:
+            src: "/etc/update-motd.d/99-production-warning"
+          register: slurp_etc_update_motd_d_files_99_production_warning
+
+        - name: "Verify files in /etc/update-motd.d"
+          vars:
+            motd_ascii_logo_expected_content: |
+              #!/bin/sh
+
+              # Colors
+              C0="\033[0m"
+              C1=$(printf '\033[1;37m')
+              C2=$(printf '\033[0;32m')  # color for center line
+
+              # ASCII art
+              ASCII_ART=$(cat <<'EOF'
+              ███████ ██████  ███    ██ ███████        ██████ ██       ██████  ██    ██ ██████
+              ██      ██   ██ ████   ██    ███        ██      ██      ██    ██ ██    ██ ██   ██
+              █████   ██   ██ ██ ██  ██   ███   █████ ██      ██      ██    ██ ██    ██ ██   ██
+              ██      ██   ██ ██  ██ ██  ███          ██      ██      ██    ██ ██    ██ ██   ██
+              ███████ ██████  ██   ████ ███████        ██████ ███████  ██████   ██████  ██████
+              EOF
+              )
+
+              # Print line by line, coloring the middle one
+              LINE_NO=0
+              TOTAL_LINES=$(echo "$ASCII_ART" | wc -l)
+              MIDDLE=$((TOTAL_LINES / 2 + 1))
+
+              echo "$ASCII_ART" | while IFS= read -r line; do
+                LINE_NO=$((LINE_NO + 1))
+                if [ "$LINE_NO" -eq "$MIDDLE" ]; then
+                  printf "%b%s%b\n" "$C2" "$line" "$C0"
+                else
+                  printf "%s\n" "$line"
+                fi
+              done
+            motd_sysinfo_expected_content: |
+              #!/bin/sh
+
+              # Colors
+              BOLD="\033[1m"
+              C0=$(printf '\033[0m')
+              C1=$(printf '\033[0;32m')
+              # Hostname & kernel
+              HOSTNAME=$(cat /proc/sys/kernel/hostname)
+              KERNEL=$(uname -r 2>/dev/null || awk '{print $3}' /proc/version)
+              ARCH=$(uname -m 2>/dev/null || echo "?")
+
+              # CPU info
+              CPU_MODEL=$(awk -F: '/model name/ {print $2; exit}' /proc/cpuinfo | sed 's/^ //')
+              CPU_CORES=$(grep -c ^processor /proc/cpuinfo)
+              CPU_FREQ=$(awk -F: '/cpu MHz/ {printf "%.0f MHz\n", $2; exit}' /proc/cpuinfo | sed 's/^ //')
+
+              # Uptime (strip decimals!)
+              UPTIME_SEC=$(cut -d' ' -f1 < /proc/uptime | cut -d. -f1)
+              UP_DAYS=$(( UPTIME_SEC/86400 ))
+              UP_HOURS=$(( (UPTIME_SEC%86400)/3600 ))
+              UP_MIN=$(( (UPTIME_SEC%3600)/60 ))
+
+              # Load average
+              LOAD=$(cut -d' ' -f1-3 < /proc/loadavg)
+              LOAD_STR="$LOAD (1m, 5m, 15m)"
+
+              # Memory (MB)
+              MEM_TOTAL=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+              MEM_AVAIL=$(awk '/MemAvailable/ {print $2}' /proc/meminfo)
+              MEM_USED=$(( MEM_TOTAL - MEM_AVAIL ))
+              MEM_STR="$(( MEM_USED/1024 ))M / $(( MEM_TOTAL/1024 ))M"
+
+              # Disk usage (root fs, in MB + device)
+              eval $(stat -f --format="BS=%s BFREE=%a BTOTAL=%b" / 2>/dev/null || echo "BS=0 BFREE=0 BTOTAL=0")
+              ROOTDEV=$(awk '$2=="/"{print $1}' /proc/mounts | head -n1)
+
+              if [ "$BS" -gt 0 ]; then
+                DFREE=$((BFREE*BS/1024/1024))
+                DTOTAL=$((BTOTAL*BS/1024/1024))
+                DUSED=$((DTOTAL-DFREE))
+                DISK_STR="${DUSED}M / ${DTOTAL}M ($ROOTDEV)"
+              else
+                DISK_STR="?"
+              fi
+
+              # Output
+              echo "-----------------------------------------------"
+              printf "%b%-8s:%b %s\n" "$C1$BOLD" "Host" "$C0" "$HOSTNAME"
+              printf "%b%-8s:%b %s (%s)\n" "$C1$BOLD" "Kernel" "$C0" "$KERNEL" "$ARCH"
+              printf "%b%-8s:%b %sd %sh %sm\n" "$C1$BOLD" "Uptime" "$C0" "$UP_DAYS" "$UP_HOURS" "$UP_MIN"
+              printf "%b%-8s:%b %s (%d cores, %s)\n" "$C1$BOLD" "CPU" "$C0" "$CPU_MODEL" "$CPU_CORES" "$CPU_FREQ"
+              printf "%b%-8s:%b %s\n" "$C1$BOLD" "Load" "$C0" "$LOAD_STR"
+              printf "%b%-8s:%b %s\n" "$C1$BOLD" "Memory" "$C0" "$MEM_STR"
+              printf "%b%-8s:%b %s\n" "$C1$BOLD" "Disk" "$C0" "$DISK_STR"
+              echo "-----------------------------------------------"
+            motd_production_warning_expected_content: |
+              #!/bin/sh
+
+              # Colors
+              C0="\033[0m"
+              C1="\033[1;31m"  # red
+
+              printf "%b%s%b\n" "$C1" "!!! WARNING: This is a PRODUCTION system. Be careful! !!!" "$C0"
+          ansible.builtin.assert:
+            that:
+              - stat_etc_update_motd_d_files_00_ascii_logo.stat.exists
+              - stat_etc_update_motd_d_files_00_ascii_logo.stat.isreg
+              - stat_etc_update_motd_d_files_00_ascii_logo.stat.pw_name == 'root'
+              - stat_etc_update_motd_d_files_00_ascii_logo.stat.gr_name == 'root'
+              - stat_etc_update_motd_d_files_00_ascii_logo.stat.mode == '0755'
+              - slurp_etc_update_motd_d_files_00_ascii_logo.content | b64decode == motd_ascii_logo_expected_content
+
+              - stat_etc_update_motd_d_files_10_sysinfo.stat.exists
+              - stat_etc_update_motd_d_files_10_sysinfo.stat.isreg
+              - stat_etc_update_motd_d_files_10_sysinfo.stat.pw_name == 'root'
+              - stat_etc_update_motd_d_files_10_sysinfo.stat.gr_name == 'root'
+              - stat_etc_update_motd_d_files_10_sysinfo.stat.mode == '0755'
+              - slurp_etc_update_motd_d_files_10_sysinfo.content | b64decode == motd_sysinfo_expected_content
+
+              - stat_etc_update_motd_d_files_99_production_warning.stat.exists
+              - stat_etc_update_motd_d_files_99_production_warning.stat.isreg
+              - stat_etc_update_motd_d_files_99_production_warning.stat.pw_name == 'root'
+              - stat_etc_update_motd_d_files_99_production_warning.stat.gr_name == 'root'
+              - stat_etc_update_motd_d_files_99_production_warning.stat.mode == '0755'
+              - slurp_etc_update_motd_d_files_99_production_warning.content | b64decode == motd_production_warning_expected_content
