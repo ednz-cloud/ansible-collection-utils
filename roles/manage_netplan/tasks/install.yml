@@ -2,13 +2,13 @@
 # task/install_packages file for manage_netplan
 - name: "Netplan | Install netplan:latest"
   ansible.builtin.include_role:
-    name: ednz_cloud.manage_apt_packages
+    name: ednz_cloud.utils.manage_apt_packages
   vars:
     manage_apt_packages_list: "{{ manage_netplan_packages }}"
 
 - name: "Netplan | Install network-manager:latest when used as renderer"
   ansible.builtin.include_role:
-    name: ednz_cloud.manage_apt_packages
+    name: ednz_cloud.utils.manage_apt_packages
   vars:
     manage_apt_packages_list: "{{ manage_netplan_networkmanager_pkg }}"
   when: manage_netplan_renderer == 'NetworkManager'

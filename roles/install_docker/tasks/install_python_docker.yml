@@ -2,6 +2,6 @@
 # task/install_python_docker file for docker
 - name: "Install docker packages"
   ansible.builtin.include_role:
-    name: ednz_cloud.manage_apt_packages
+    name: ednz_cloud.utils.manage_apt_packages
   vars:
     manage_apt_packages_list: "{{ install_docker_python_packages_list }}"
