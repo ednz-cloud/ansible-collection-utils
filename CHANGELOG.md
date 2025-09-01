@@ -1,3 +1,9 @@
+## v0.8.1 (2025-09-01)
+
+### Fix
+
+- **roles**: remove dependencies on deprecated roles
+
 ## v0.8.0 (2025-08-31)
 
 ### Feat
