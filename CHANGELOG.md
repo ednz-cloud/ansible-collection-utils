@@ -1,3 +1,9 @@
+## v0.9.0 (2025-09-04)
+
+### Feat
+
+- **modules**: add to_ini_list filter plugin
+
 ## v0.8.1 (2025-09-01)
 
 ### Fix
