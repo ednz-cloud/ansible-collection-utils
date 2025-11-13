@@ -4,3 +4,4 @@
 roles/ednz_cloud.*
 tests/output
 .ansible
+collections

@@ -1,0 +1,22 @@
+---
+# task/manual file for dns
+- name: "DNS | Ensure systemd-resolved is not used"
+  when:
+    - ansible_facts['services'][dns_systemd_resolved_service]['status'] | default('not-found') != 'not-found'
+    - ansible_facts['services'][dns_systemd_resolved_service]['state'] != 'inactive' or
+      ansible_facts['services'][dns_systemd_resolved_service]['status'] != 'disabled'
+  block:
+    - name: "DNS | Stop and disable {{ dns_systemd_resolved_service }}"
+      ansible.builtin.service:
+        name: "{{ dns_systemd_resolved_service }}"
+        state: stopped
+        enabled: false
+
+- name: "DNS | Copy configuration: {{ dns_resolv_conf_path }}"
+  ansible.builtin.template:
+    src: "resolv.conf.j2"
+    dest: "{{ dns_resolv_conf_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _dns_systemd_resolved_conf

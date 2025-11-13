@@ -1,0 +1,59 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test: package & service systemd-resolved"
+      block:
+        - name: "Gather service facts"
+          ansible.builtin.service_facts:
+
+        - name: "Verify package & service systemd-resolved"
+          ansible.builtin.assert:
+            that:
+              - ansible_facts['services']['systemd-resolved.service']['status'] == 'enabled'
+              - ansible_facts['services']['systemd-resolved.service']['state'] == 'running'
+
+    - name: "Test: directory /etc/systemd/resolved.conf.d"
+      block:
+        - name: "Stat directory /etc/systemd/resolved.conf.d"
+          ansible.builtin.stat:
+            path: "/etc/systemd/resolved.conf.d"
+          register: stat_etc_systemd_resolved_conf_d
+
+        - name: "Verify directory /etc/systemd/resolved.conf.d"
+          ansible.builtin.assert:
+            that:
+              - stat_etc_systemd_resolved_conf_d.stat.exists
+              - stat_etc_systemd_resolved_conf_d.stat.isdir
+              - stat_etc_systemd_resolved_conf_d.stat.pw_name == 'root'
+              - stat_etc_systemd_resolved_conf_d.stat.gr_name == 'root'
+              - stat_etc_systemd_resolved_conf_d.stat.mode == '0755'
+
+    - name: "Test: files in /etc/systemd/resolved.conf.d"
+      block:
+        - name: "Stat file /etc/systemd/resolved.conf.d/10-dns.conf"
+          ansible.builtin.stat:
+            path: "/etc/systemd/resolved.conf.d/10-dns.conf"
+          register: stat_etc_systemd_resolved_conf_d_10_dns_conf
+
+        - name: "Slurp file /etc/systemd/resolved.conf.d/10-dns.conf"
+          ansible.builtin.slurp:
+            src: "/etc/systemd/resolved.conf.d/10-dns.conf"
+          register: slurp_etc_systemd_resolved_conf_d_10_dns_conf
+
+        - name: "Verify files in /etc/systemd/resolved.conf.d"
+          vars:
+            resolved_conf_expected_content: |
+              [Resolve]
+              DNSStubListener=no
+              ReadEtcHosts=yes
+          ansible.builtin.assert:
+            that:
+              - stat_etc_systemd_resolved_conf_d_10_dns_conf.stat.exists
+              - stat_etc_systemd_resolved_conf_d_10_dns_conf.stat.isreg
+              - stat_etc_systemd_resolved_conf_d_10_dns_conf.stat.pw_name == 'root'
+              - stat_etc_systemd_resolved_conf_d_10_dns_conf.stat.gr_name == 'root'
+              - stat_etc_systemd_resolved_conf_d_10_dns_conf.stat.mode == '0644'
+              - slurp_etc_systemd_resolved_conf_d_10_dns_conf.content | b64decode == resolved_conf_expected_content

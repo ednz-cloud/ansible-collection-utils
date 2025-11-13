@@ -1,0 +1,32 @@
+---
+# vars file for dns_resolver_conf
+
+# title: Supported resolvers
+# required: true
+# description-lines:
+# The list of supported resolvers.
+dns_supported_resolvers: ["systemd", "manual"]
+
+# title: Path to resolv.conf
+# required: true
+# description-lines:
+# Path to resolv.conf file.
+dns_resolv_conf_path: "/etc/resolv.conf"
+
+# title: Path to systemd-resolved configuration
+# required: true
+# description-lines:
+# Path to systemd-resolved configuration directory.
+dns_systemd_resolved_conf_directory: /etc/systemd/resolved.conf.d
+
+# title: Package name
+# required: true
+# description-lines:
+# Package name for systemd-resolved.
+dns_systemd_resolved_package: systemd-resolved
+
+# title: Systemd service name
+# required: true
+# description-lines:
+# Systemd service name for systemd-resolved.
+dns_systemd_resolved_service: systemd-resolved.service

@@ -1,0 +1,42 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test: service systemd-resolved"
+      block:
+        - name: "Gather service facts"
+          ansible.builtin.service_facts:
+
+        - name: "Verify package & service systemd-resolved"
+          ansible.builtin.assert:
+            that:
+              - ansible_facts['services']['systemd-resolved.service']['status'] == 'disabled'
+              - ansible_facts['services']['systemd-resolved.service']['state'] == 'inactive'
+
+    - name: "Test: file /etc/resolv.conf"
+      block:
+        - name: "Stat file /etc/resolv.conf"
+          ansible.builtin.stat:
+            path: "/etc/resolv.conf"
+          register: stat_etc_resolv_conf
+
+        - name: "Slurp file /etc/resolv.conf"
+          ansible.builtin.slurp:
+            src: "/etc/resolv.conf"
+          register: slurp_etc_resolv_conf
+
+        - name: "Verify file /etc/resolv.conf"
+          vars:
+            etc_resolv_conf_expected_content: |
+              nameserver 1.1.1.1
+              nameserver 8.8.8.8
+          ansible.builtin.assert:
+            that:
+              - stat_etc_resolv_conf.stat.exists
+              - stat_etc_resolv_conf.stat.isreg
+              - stat_etc_resolv_conf.stat.pw_name == 'root'
+              - stat_etc_resolv_conf.stat.gr_name == 'root'
+              - stat_etc_resolv_conf.stat.mode == '0644'
+              - slurp_etc_resolv_conf.content | b64decode == etc_resolv_conf_expected_content

@@ -1,0 +1,11 @@
+---
+dns_resolver_mode: "systemd"
+dns_nameservers:
+  - "1.1.1.1"
+  - "8.8.8.8"
+dns_resolved_conf_options:
+  DNSStubListener: "no"
+  ReadEtcHosts: "yes"
+dns_resolv_conf_search: []
+dns_resolv_conf_sortlist: []
+dns_resolv_conf_options: []

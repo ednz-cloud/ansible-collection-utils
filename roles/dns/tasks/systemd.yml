@@ -1,0 +1,43 @@
+---
+# task/systemd file for dns
+
+# This should never be used but just in case
+- name: "DNS | Ensure systemd-resolved is usable"
+  when:
+    - ansible_facts['services'][dns_systemd_resolved_service]['status'] | default('not-found') != 'enabled' or
+      ansible_facts['services'][dns_systemd_resolved_service]['state'] | default('not-found') != 'running'
+  block:
+    - name: "DNS | Install {{ dns_systemd_resolved_package }}"
+      ansible.builtin.apt:
+        name: "{{ dns_systemd_resolved_package }}"
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: "DNS | Start and enable {{ dns_systemd_resolved_service }}"
+      ansible.builtin.service:
+        name: "{{ dns_systemd_resolved_service }}"
+        state: started
+        enabled: true
+
+- name: "DNS | Ensure systemd-resolved configuration directory exists"
+  ansible.builtin.file:
+    path: "{{ dns_systemd_resolved_conf_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "DNS | Copy systemd-resolved configuration"
+  ansible.builtin.template:
+    src: "10-dns.conf.j2"
+    dest: "{{ dns_systemd_resolved_conf_directory }}/10-dns.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _dns_systemd_resolved_conf
+
+- name: "DNS | Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _dns_systemd_resolved_need_reload: true
+  when: _dns_systemd_resolved_conf.changed

@@ -1,0 +1,12 @@
+{% if (dns_resolv_conf_search | default([])) | length > 0 %}
+search {{ dns_resolv_conf_search | join(' ') }}
+{% endif %}
+{% for ns in dns_nameservers | default([]) %}
+nameserver {{ ns }}
+{% endfor %}
+{% if (dns_resolv_conf_sortlist | default([])) | length > 0 %}
+sortlist {{ dns_resolv_conf_sortlist | join(' ') }}
+{% endif %}
+{% if (dns_resolv_conf_options | default([])) | length > 0 %}
+options {{ dns_resolv_conf_options | join(' ') }}
+{% endif %}

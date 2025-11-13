@@ -1,0 +1,51 @@
+---
+# defaults file for dns_resolver_conf
+
+# title: Resolver name
+# required: true
+# description-lines:
+# The resolver to use for DNS resolution
+# Currently supports: systemd, manual
+dns_resolver_mode: "systemd"
+
+# title: Nameservers
+# required: true
+# description-lines:
+# The list of DNS servers to use.
+# List of 0 to N DNS servers are expected.
+# Depending on resolver, syntax may vary.
+# See man resolv.conf, man resolved.conf
+dns_nameservers:
+  - "1.1.1.1"
+  - "8.8.8.8"
+
+# title: Resolved options
+# required: true
+# description-lines:
+# When using the systemd resolver,
+# A dict of options to pass to the resolved.conf file.
+# DNS servers are not passed by default to avoid colliding
+# with dhcp-served servers.
+# See man resolved.conf for more infos
+dns_resolved_conf_options: {}
+
+# title: resolv.conf search options
+# required: true
+# description-lines:
+# When using the manual resolver,
+# a list of search domains.
+dns_resolv_conf_search: []
+
+# title: resolv.conf sortlist options
+# required: true
+# description-lines:
+# When using the manual resolver,
+# a list of sortlists.
+dns_resolv_conf_sortlist: []
+
+# title: resolv.conf options
+# required: true
+# description-lines:
+# When using the manual resolver,
+# a list of options.
+dns_resolv_conf_options: []
