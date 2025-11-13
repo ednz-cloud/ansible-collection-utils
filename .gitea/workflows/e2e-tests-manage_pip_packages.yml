@@ -14,6 +14,9 @@ on:
       - molecule/manage_pip_packages__**
       - plugins/filter/to_cli_flags.py
 
+env:
+  OS_CLOUD: pcp-w3rxsrj-dc4-a
+
 jobs:
   retrieve-credentials:
     name: Retrieve Credentials
@@ -33,7 +36,7 @@ jobs:
           secretId: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
           secrets: |
             kv/data/applications/gitea/users/actions username | GITEA_ACTIONS_USERNAME ;
-            kv/data/applications/gitea/users/actions token_write | GITEA_ACTIONS_TOKEN ;
+            kv/data/applications/gitea/users/actions token_read | GITEA_ACTIONS_TOKEN ;
 
       - name: Generate Vault token
         id: generate-vault-token
@@ -45,6 +48,11 @@ jobs:
   end_to_end_test:
     name: End to End Test
     runs-on: ubuntu-latest
+    container:
+      image: git.ednz.fr/container-factory/ansible-runner:act-latest
+      credentials:
+        username: ${{ needs.retrieve-credentials.outputs.registry-username }}
+        password: ${{ needs.retrieve-credentials.outputs.registry-token }}
     needs: retrieve-credentials
     strategy:
       matrix:
@@ -65,17 +73,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate OpenStack cloud file
-        uses: https://git.ednz.fr/github-actions/library/.gitea/actions/generate-cloud-config@v0.3.0
+        uses: https://git.ednz.fr/github-actions/library/.gitea/actions/generate-cloud-config@v0.4.1
         with:
           vault_addr: https://vault.ednz.fr
           vault_token: ${{ needs.retrieve-credentials.outputs.vault-token }}
 
-      - name: Run end-to-end tests
-        uses: https://git.ednz.fr/github-actions/library/.gitea/actions/molecule-e2e-test@v0.3.0
-        with:
-          role: install_docker
-          scenario: ${{ matrix.scenario }}
-          test_os: ${{ matrix.test_config.test_os }}
-          test_user: ${{ matrix.test_config.test_user }}
-          is_openstack: "true"
-          os_cloud: pcp-w3rxsrj-dc4-a
+      - name: Run Molecule tests
+        run: molecule test -s ${{ matrix.scenario }}
+        shell: bash
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"
+          ANSIBLE_FORCE_COLOR: "true"
+          MOLECULE_TEST_OS: ${{ matrix.test_config.test_os }}
+          MOLECULE_TEST_USER: ${{ matrix.test_config.test_user }}
