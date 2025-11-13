@@ -9,13 +9,27 @@
         return_content: true
       register: _install_docker_latest_release
 
+    # Note: starting with v29.0.0, github tags are now prefixed with "docker-",
+    # so we need to trim this aswell in order to get the actual tag.
     - name: "Docker | Set wanted docker version to latest tag"
       ansible.builtin.set_fact:
-        _install_docker_wanted_version: "{{ _install_docker_latest_release.json['tag_name']|regex_replace('v', '') }}"
+        _install_docker_wanted_version: >-
+          {{
+            _install_docker_latest_release.json['tag_name'] |
+            regex_replace('^docker-', '') |
+            regex_replace('^v', '')
+          }}
 
+# Note: we also trim user given input that may be mislead by
+# the tagging convention on github
 - name: "Docker | Set wanted docker version to {{ install_docker_version }}"
   ansible.builtin.set_fact:
-    _install_docker_wanted_version: "{{ install_docker_version|regex_replace('v', '') }}"
+    _install_docker_wanted_version: >-
+      {{
+        install_docker_version |
+        regex_replace('^docker-', '') |
+        regex_replace('^v', '')
+      }}
   when: install_docker_version != 'latest'
 
 - name: "Docker | Get current docker version"
