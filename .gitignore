@@ -5,3 +5,6 @@ roles/ednz_cloud.*
 tests/output
 .ansible
 collections
+
+# ignore act local secrets file
+.secrets
