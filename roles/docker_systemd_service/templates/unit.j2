@@ -1,4 +1,3 @@
-# {{ ansible_managed }}
 [Unit]
 {% for key, value in _docker_systemd_service_systemd_unit_options | dictsort %}
 {% if value is sequence and value is not string %}
