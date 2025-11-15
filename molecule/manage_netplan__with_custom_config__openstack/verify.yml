@@ -50,7 +50,6 @@
                     link: eth1
                     link-local: []
                     mtu: 1500
-
           ansible.builtin.assert:
             that:
               - stat_etc_netplan.stat.exists
@@ -63,4 +62,5 @@
               - stat_tmp_ansible_config_yml.stat.pw_name == 'root'
               - stat_tmp_ansible_config_yml.stat.gr_name == 'root'
               - stat_tmp_ansible_config_yml.stat.mode == '0600'
-              - (slurp_tmp_ansible_config_yml.content|b64decode) == netplan_expected_config_file
+              - (slurp_tmp_ansible_config_yml.content | b64decode | trim) ==
+                (netplan_expected_config_file | trim)
