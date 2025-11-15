@@ -1,3 +1,15 @@
+## v0.10.0 (2025-11-15)
+
+### Feat
+
+- **roles**: add dns role
+
+### Fix
+
+- **roles/manage_netplan**: remove deprecated ansible_managed variable
+- **roles/docker_systemd_service**: remove deprecated ansible_managed variable
+- **roles**: adjust tag trimming in install_docker role for new tagging convention
+
 ## v0.9.0 (2025-09-04)
 
 ### Feat
