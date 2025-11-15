@@ -1,0 +1,25 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  tasks:
+    - name: "Collect files under /var/lib/apt/lists"
+      ansible.builtin.find:
+        paths: "/var/lib/apt/lists/"
+        hidden: True
+        recurse: True
+      register: _files_list
+
+    - name: "Collect directories under /var/lib/apt/lists"
+      ansible.builtin.find:
+        paths: "/var/lib/apt/lists/"
+        hidden: True
+        recurse: True
+        file_type: directory
+      register: _directories_list
+
+    - name: "Remove all files & directories under /var/lib/apt/lists"
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ _files_list.files + _directories_list.files }}"
