@@ -37,7 +37,7 @@ Description: Install and configure docker for debian-based distros.
 | [install_docker_compose](defaults/main.yml#L52)   | bool | `False` |    false  |  Install Docker Compose |
 | [install_docker_compose_version](defaults/main.yml#L59)   | str | `latest` |    false  |  Docker Compose version |
 | [install_docker_install_completion](defaults/main.yml#L66)   | bool | `True` |    false  |  Install shell completions |
-| [install_docker_completion_shell](defaults/main.yml#L73)   | NoneType | `None` |    false  |  Shell type for completion |
+| [install_docker_completion_shell](defaults/main.yml#L73)   | str | `bash` |    false  |  Shell type for completion |
 <details>
 <summary><b>🖇️ Full descriptions for vars in defaults/main.yml</b></summary>
 <br>
@@ -62,8 +62,8 @@ If true, the version specified in install_docker_compose_version will be downloa
 Use 'latest' to install the most recent stable version, or specify a version tag (e.g., 'v2.27.0').<br></td></tr>
 <tr><td><b>install_docker_install_completion</b></td><td>Controls whether Docker CLI autocompletion scripts should be installed.<br>
 Enhances shell usability for Docker commands.<br></td></tr>
-<tr><td><b>install_docker_completion_shell</b></td><td>Defines the shell type (e.g., bash, zsh) for which Docker completion scripts should be installed.<br>
-Leave empty to disable or auto-detect based on user shell environment.<br></td></tr>
+<tr><td><b>install_docker_completion_shell</b></td><td>Defines the shell type (e.g., bash) for which Docker completion scripts should be installed.<br>
+Currently, the only supported shell is bash.<br></td></tr>
 </table>
 <br>
 </details>
@@ -144,8 +144,8 @@ Leave empty to disable or auto-detect based on user shell environment.<br></td><
 | Docker ¦ Ensure modprobe modules are loaded | community.general.modprobe | False |
 | Docker ¦ Ensure sysctl options are proprerly set | ansible.posix.sysctl | False |
 | Docker ¦ Set restart-check variable | ansible.builtin.set_fact | True |
-| Docker ¦ Get docker completion | ansible.builtin.command | False |
 | Docker ¦ Install completion for bash | block | True |
+| Docker ¦ Get docker completion | ansible.builtin.command | False |
 | Docker ¦ Ensure /etc/bash_completion.d directory exists | ansible.builtin.file | False |
 | Docker ¦ Copy bash completion | ansible.builtin.copy | False |
 

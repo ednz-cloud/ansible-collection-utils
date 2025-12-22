@@ -68,6 +68,6 @@ install_docker_install_completion: true
 # title: Shell type for completion
 # required: false
 # description-lines:
-# Defines the shell type (e.g., bash, zsh) for which Docker completion scripts should be installed.
-# Leave empty to disable or auto-detect based on user shell environment.
-install_docker_completion_shell:
+# Defines the shell type (e.g., bash) for which Docker completion scripts should be installed.
+# Currently, the only supported shell is bash.
+install_docker_completion_shell: bash
