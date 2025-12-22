@@ -1,3 +1,9 @@
+## v0.10.1 (2025-12-22)
+
+### Fix
+
+- **roles/install_docker**: remove support for zsh shell completion
+
 ## v0.10.0 (2025-11-15)
 
 ### Feat
