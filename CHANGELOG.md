@@ -1,3 +1,9 @@
+## v0.10.2 (2025-12-30)
+
+### Fix
+
+- **roles/dns**: ensure systemd resolv.conf file is used when using systemd-resolved
+
 ## v0.10.1 (2025-12-22)
 
 ### Fix
