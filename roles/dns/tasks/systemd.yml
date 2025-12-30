@@ -37,6 +37,33 @@
     mode: "0644"
   register: _dns_systemd_resolved_conf
 
+- name: "DNS | Get current /etc/resolv.conf state"
+  ansible.builtin.stat:
+    path: /etc/resolv.conf
+  register: _dns_current_etc_resolv_conf
+
+- name: "DNS | Set /etc/resolve.conf file"
+  when:
+    - not _dns_current_etc_resolv_conf.stat.islnk or
+      (_dns_current_etc_resolv_conf.stat.islnk and
+      _dns_current_etc_resolv_conf.stat.lnk_source != dns_systemd_resolved_stub_file
+      )
+  block:
+    - name: "DNS | Remove incompatible /etc/reoslv.conf file"
+      ansible.builtin.file:
+        dest: /etc/resolv.conf
+        state: absent
+      when: not _dns_current_etc_resolv_conf.stat.islnk
+
+    - name: "DNS | Ensure /etc/resolv.conf is symlink to correct stub file"
+      ansible.builtin.file:
+        src: "{{ dns_systemd_resolved_stub_file }}"
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: "0777"
+        state: link
+
 - name: "DNS | Set reload-check & restart-check variable"
   ansible.builtin.set_fact:
     _dns_systemd_resolved_need_reload: true

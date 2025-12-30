@@ -30,3 +30,28 @@ dns_systemd_resolved_package: systemd-resolved
 # description-lines:
 # Systemd service name for systemd-resolved.
 dns_systemd_resolved_service: systemd-resolved.service
+
+# title: Stub resolver enabled
+# required: true
+# description-lines:
+# Variable for detecting if the stub resolver of systemd-resolved
+# is in-use. This variable should not be changed.
+dns_systemd_stub_resolver_enabled: >-
+  {{
+    "DNSStubListener" not in dns_resolved_conf_options.keys()
+    or (
+      "DNSStubListener" in dns_resolved_conf_options.keys()
+      and dns_resolved_conf_options["DNSStubListener"] == "yes"
+    )
+  }}
+
+# title: Systemd resolver file
+# required: true
+# description-lines:
+# File to symlink to /etc/resolv.conf when resolver is systemd.
+# Changes based on if the stub-resolver is enabled.
+dns_systemd_resolved_stub_file: >-
+  {{
+    "/run/systemd/resolve/stub-resolv.conf" if (dns_systemd_stub_resolver_enabled | bool)
+    else "/run/systemd/resolve/resolv.conf"
+  }}

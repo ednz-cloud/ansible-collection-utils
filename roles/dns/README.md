@@ -77,6 +77,8 @@ a list of options.<br></td></tr>
 | [dns_systemd_resolved_conf_directory](vars/main.yml#L20)   | str | `/etc/systemd/resolved.conf.d` |    true  |  Path to systemd-resolved configuration |
 | [dns_systemd_resolved_package](vars/main.yml#L26)   | str | `systemd-resolved` |    true  |  Package name |
 | [dns_systemd_resolved_service](vars/main.yml#L32)   | str | `systemd-resolved.service` |    true  |  Systemd service name |
+| [dns_systemd_stub_resolver_enabled](vars/main.yml#L39)   | str | `<multiline value: folded_strip>` |    true  |  Stub resolver enabled |
+| [dns_systemd_resolved_stub_file](vars/main.yml#L53)   | str | `<multiline value: folded_strip>` |    true  |  Systemd resolver file |
 <details>
 <summary><b>🖇️ Full Descriptions for vars in vars/main.yml</b></summary>
 <br>
@@ -89,6 +91,10 @@ a list of options.<br></td></tr>
 <tr><td><b>dns_systemd_resolved_conf_directory</b></td><td>Path to systemd-resolved configuration directory.<br></td></tr>
 <tr><td><b>dns_systemd_resolved_package</b></td><td>Package name for systemd-resolved.<br></td></tr>
 <tr><td><b>dns_systemd_resolved_service</b></td><td>Systemd service name for systemd-resolved.<br></td></tr>
+<tr><td><b>dns_systemd_stub_resolver_enabled</b></td><td>Variable for detecting if the stub resolver of systemd-resolved<br>
+is in-use. This variable should not be changed.<br></td></tr>
+<tr><td><b>dns_systemd_resolved_stub_file</b></td><td>File to symlink to /etc/resolv.conf when resolver is systemd.<br>
+Changes based on if the stub-resolver is enabled.<br></td></tr>
 </table>
 <br>
 </details>
@@ -124,6 +130,10 @@ a list of options.<br></td></tr>
 | DNS ¦ Start and enable {{ dns_systemd_resolved_service }} | ansible.builtin.service | False |
 | DNS ¦ Ensure systemd-resolved configuration directory exists | ansible.builtin.file | False |
 | DNS ¦ Copy systemd-resolved configuration | ansible.builtin.template | False |
+| DNS ¦ Get current /etc/resolv.conf state | ansible.builtin.stat | False |
+| DNS ¦ Set /etc/resolve.conf file | block | True |
+| DNS ¦ Remove incompatible /etc/reoslv.conf file | ansible.builtin.file | True |
+| DNS ¦ Ensure /etc/resolv.conf is symlink to correct stub file | ansible.builtin.file | False |
 | DNS ¦ Set reload-check & restart-check variable | ansible.builtin.set_fact | True |
 
 
