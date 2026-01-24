@@ -6,15 +6,15 @@
     - name: "Collect files under /var/lib/apt/lists"
       ansible.builtin.find:
         paths: "/var/lib/apt/lists/"
-        hidden: True
-        recurse: True
+        hidden: true
+        recurse: true
       register: _files_list
 
     - name: "Collect directories under /var/lib/apt/lists"
       ansible.builtin.find:
         paths: "/var/lib/apt/lists/"
-        hidden: True
-        recurse: True
+        hidden: true
+        recurse: true
         file_type: directory
       register: _directories_list
 

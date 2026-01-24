@@ -1,6 +1,6 @@
 ---
 # task/recursive_copy_extra_dirs file for docker_systemd_service
-- name: "Docker systemd service | Ensure destination directory exists"
+- name: "recursive_copy_extra_dirs | Ensure destination directory exists"
   ansible.builtin.file:
     path: "{{ dir_source_item.dest }}"
     # recurse: true
@@ -9,7 +9,7 @@
     group: "{{ dir_source_item.group | default('root') }}"
     mode: "0775"
 
-- name: "Docker systemd service | Create extra directory sources"
+- name: "recursive_copy_extra_dirs | Create extra directory sources"
   ansible.builtin.file:
     path: "{{ dir_source_item.dest }}/{{ item.path }}"
     # recurse: true
@@ -20,7 +20,7 @@
   with_community.general.filetree: "{{ dir_source_item.src }}/"
   when: item.state == 'directory'
 
-- name: "Docker systemd service | Template extra directory sources"
+- name: "recursive_copy_extra_dirs | Template extra directory sources"
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ dir_source_item.dest }}/{{ item.path | regex_replace('\\.j2$', '') }}"
@@ -31,9 +31,9 @@
   when: item.state == 'file'
   register: _docker_systemd_service_extra_dir_template
 
-- name: "Docker systemd service | Populate on_change list for extra directories"
+- name: "recursive_copy_extra_dirs | Populate on_change list for extra directories"
   ansible.builtin.set_fact:
     _docker_systemd_service_extra_file_changes: >-
       {{ _docker_systemd_service_extra_file_changes + [dir_source_item.on_change | default('noop')] }}
   loop: "{{ _docker_systemd_service_extra_dir_template.results }}"
-  when: item.changed
+  when: item.changed # noqa: no-handler

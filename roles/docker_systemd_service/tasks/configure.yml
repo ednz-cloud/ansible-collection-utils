@@ -1,6 +1,6 @@
 ---
 # task/configure file for docker_systemd_service
-- name: "Docker systemd service | Create ENV file(s) for docker service(s)"
+- name: "configure | Create ENV file(s) for docker service(s)"
   ansible.builtin.template:
     src: env.j2
     dest: "{{ docker_systemd_service_sysconf_dir }}/{{ docker_systemd_service_name }}"
@@ -9,7 +9,7 @@
     mode: "0600"
   register: _docker_systemd_service_env_file
 
-- name: "Docker systemd service | Pull docker image(s)"
+- name: "configure | Pull docker image(s)"
   community.docker.docker_image:
     name: "{{ docker_systemd_service_image }}"
     force_source: "{{ docker_systemd_service_container_pull_force_source | bool }}"
@@ -17,25 +17,25 @@
   register: _docker_systemd_service_image_pull
   when: docker_systemd_service_container_pull_image
 
-- name: "Docker systemd service | Merge user defined systemd unit options with defaults"
+- name: "configure | Merge user defined systemd unit options with defaults"
   ansible.builtin.set_fact:
     _docker_systemd_service_systemd_unit_options: >-
       {{ docker_systemd_service_systemd_unit_options_default |
         combine(docker_systemd_service_systemd_unit_options, recursive=True) }}
 
-- name: "Docker systemd service | Merge user defined systemd service options with defaults"
+- name: "configure | Merge user defined systemd service options with defaults"
   ansible.builtin.set_fact:
     _docker_systemd_service_systemd_service_options: >-
       {{ docker_systemd_service_systemd_service_options_default |
         combine(docker_systemd_service_systemd_service_options, recursive=True) }}
 
-- name: "Docker systemd service | Merge user defined systemd install options with defaults"
+- name: "configure | Merge user defined systemd install options with defaults"
   ansible.builtin.set_fact:
     _docker_systemd_service_systemd_install_options: >-
       {{ docker_systemd_service_systemd_install_options_default |
         combine(docker_systemd_service_systemd_install_options, recursive=True) }}
 
-- name: "Docker systemd service | Create unit file(s) for service(s)"
+- name: "configure | Create unit file(s) for service(s)"
   ansible.builtin.template:
     src: unit.j2
     dest: "/etc/systemd/system/{{ docker_systemd_service_name }}.service"
@@ -44,21 +44,21 @@
     mode: "0644"
   register: _docker_systemd_service_unit_file
 
-- name: "Docker systemd service | Copy extra configuration files"
+- name: "configure | Copy extra configuration files"
   when: docker_systemd_service_extra_files | length > 0
   block:
-    - name: "Docker systemd service | Populate empty on_change list"
+    - name: "configure | Populate empty on_change list"
       ansible.builtin.set_fact:
         _docker_systemd_service_extra_file_changes: []
 
-    - name: "Docker systemd service | Get extra file types"
+    - name: "configure | Get extra file types"
       ansible.builtin.stat:
         path: "{{ item.src }}"
       loop: "{{ docker_systemd_service_extra_files }}"
       register: docker_systemd_service_extra_files_stat
       delegate_to: localhost
 
-    - name: "Docker systemd service | Set list for file sources"
+    - name: "configure | Set list for file sources"
       vars:
         _docker_systemd_service_file_sources: []
       ansible.builtin.set_fact:
@@ -69,7 +69,7 @@
         loop_var: item
       delegate_to: localhost
 
-    - name: "Docker systemd service | Set list for directory sources"
+    - name: "configure | Set list for directory sources"
       vars:
         _docker_systemd_service_dir_sources: []
       ansible.builtin.set_fact:
@@ -80,7 +80,7 @@
         loop_var: item
       delegate_to: localhost
 
-    - name: "Docker systemd service | Template extra file sources"
+    - name: "configure | Template extra file sources"
       ansible.builtin.template:
         src: "{{ item.src }}"
         dest: "{{ item.dest | regex_replace('\\.j2$', '') }}"
@@ -91,34 +91,35 @@
       when: _docker_systemd_service_file_sources is defined
       register: _docker_systemd_service_extra_file_template
 
-    - name: "Docker systemd service | Populate on_change list for extra files"
+    - name: "configure | Populate on_change list for extra files"
       ansible.builtin.set_fact:
         _docker_systemd_service_extra_file_changes: >-
           {{ _docker_systemd_service_extra_file_changes + [item.item.on_change | default('noop')] }}
       loop: "{{ _docker_systemd_service_extra_file_template.results }}"
-      when: item.changed
+      when: item.changed # noqa: no-handler
 
-    - name: "Docker systemd service | Template extra directory sources"
+    - name: "configure | Template extra directory sources"
       ansible.builtin.include_tasks: recursive_copy_extra_dirs.yml
       loop: "{{ _docker_systemd_service_dir_sources }}"
       loop_control:
         loop_var: dir_source_item
       when: _docker_systemd_service_dir_sources is defined
 
-    - name: "Docker systemd service | Set reload-check & restart-check variable"
+    - name: "configure | Set reload-check & restart-check variable"
       ansible.builtin.set_fact:
         _docker_systemd_service_extra_file_changes: "{{ _docker_systemd_service_extra_file_changes | unique }}"
 
-    - name: "Docker systemd service | Set reload-check & restart-check variable"
+    - name: "configure | Set reload-check & restart-check variable"
       ansible.builtin.set_fact:
         _docker_systemd_service_need_reload: "{{ 'reload' in _docker_systemd_service_extra_file_changes }}"
         _docker_systemd_service_need_restart: "{{ 'restart' in _docker_systemd_service_extra_file_changes }}"
 
-- name: "Docker systemd service | Set reload-check & restart-check variable"
+- name: "configure | Set reload-check & restart-check variable"
   ansible.builtin.set_fact:
     _docker_systemd_service_need_daemon_reload: >-
       {{ _docker_systemd_service_unit_file.changed | bool }}
     _docker_systemd_service_need_restart: true
-  when: _docker_systemd_service_env_file.changed or
+  when: >- # noqa: no-handler
+    _docker_systemd_service_env_file.changed or
     _docker_systemd_service_unit_file.changed or
     _docker_systemd_service_image_pull.changed

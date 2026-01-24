@@ -1,6 +1,4 @@
 ---
-# defaults file for manage_pip_packages
-
 # title: Install prerequisites
 # required: false
 # description-lines:

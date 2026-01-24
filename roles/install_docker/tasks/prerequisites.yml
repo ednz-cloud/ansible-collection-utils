@@ -1,11 +1,11 @@
 ---
 # task/prerequisites file for docker
-- name: "Create group {{ install_docker_group }}"
+- name: "prerequisites | Create group {{ install_docker_group }}"
   ansible.builtin.group:
     name: "{{ install_docker_group }}"
     state: present
 
-- name: "Create directory {{ install_docker_daemon_dir }}"
+- name: "prerequisites | Create directory {{ install_docker_daemon_dir }}"
   ansible.builtin.file:
     path: "{{ install_docker_daemon_dir }}"
     state: directory
@@ -13,7 +13,7 @@
     group: root
     mode: "0755"
 
-- name: "Create directory {{ install_docker_data_dir }}"
+- name: "prerequisites | Create directory {{ install_docker_data_dir }}"
   ansible.builtin.file:
     path: "{{ install_docker_data_dir }}"
     state: directory

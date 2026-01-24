@@ -92,7 +92,7 @@
         - name: "Find all files in /opt/files"
           ansible.builtin.find:
             paths: "/opt/files"
-            recurse: yes
+            recurse: true
             file_type: any
           register: found_opt_files
 

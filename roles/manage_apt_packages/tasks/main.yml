@@ -2,7 +2,7 @@
 # task/main file for manage_apt_packages
 - name: "Update apt caches"
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: "{{ manage_apt_packages_apt_cache_time }}"
 
 - name: "Install/remove required apt packages"

@@ -1,5 +1,4 @@
 ---
-# meta file for manage_pip_packages
 galaxy_info:
   namespace: "ednz_cloud"
   role_name: "manage_pip_packages"

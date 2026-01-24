@@ -19,7 +19,7 @@ manage_repositories_signing_keys_location: /usr/share/keyrings
 # title: Comment for the sources list file.
 # required: true
 # description: This variable defines the comment for the sources list file (because it is not used).
-manage_repositories_sources_list_message: "# See /etc/apt/sources.list.d/{{ ansible_distribution|lower }}.sources\\n"
+manage_repositories_sources_list_message: "# See /etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources\\n"
 
 # title: Required packages for managing repositories.
 # required: true

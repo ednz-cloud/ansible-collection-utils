@@ -65,9 +65,6 @@
             path: "/etc/resolv.conf"
           register: stat_etc_resolv_conf
 
-        - debug:
-            msg: "{{ stat_etc_resolv_conf }}"
-
         - name: "Verify file /etc/resolv.conf"
           ansible.builtin.assert:
             that:

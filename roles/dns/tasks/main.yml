@@ -1,6 +1,6 @@
 ---
 # task/main file for dns
-- name: "DNS | Ensure resolver is supported"
+- name: "Ensure resolver is supported"
   ansible.builtin.assert:
     that:
       - dns_resolver_mode in dns_supported_resolvers
@@ -8,19 +8,19 @@
       DNS resolver not supported, please ensure
       dns_resolver_mode is one of {{ dns_supported_resolvers }}
 
-- name: "DNS | Set reload-check & restart-check variable"
+- name: "Set reload-check & restart-check variable"
   ansible.builtin.set_fact:
     _dns_systemd_resolved_need_reload: false
 
-- name: "DNS | Gather service facts"
+- name: "Gather service facts"
   ansible.builtin.service_facts:
   when:
     - (ansible_facts.services | default({})) == {}
 
-- name: "DNS | include tasks for resolver: {{ dns_resolver_mode }}"
+- name: "Include tasks for resolver: {{ dns_resolver_mode }}"
   ansible.builtin.include_tasks: "{{ dns_resolver_mode }}.yml"
 
-- name: "DNS | Reload service: {{ dns_systemd_resolved_service }}"
+- name: "Reload service: {{ dns_systemd_resolved_service }}"
   ansible.builtin.service:
     name: "{{ dns_systemd_resolved_service }}"
     state: restarted

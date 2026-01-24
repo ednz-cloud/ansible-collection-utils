@@ -1,28 +1,27 @@
 ---
-# task/main file for manage_netplan
-- name: "Netplan | Set generate-check and apply-check variables"
+- name: "Set generate-check and apply-check variables"
   ansible.builtin.set_fact:
     _manage_netplan_need_generate: false
     _manage_netplan_need_apply: false
 
-- name: "Netplan | Import install.yml"
+- name: "Import install.yml"
   ansible.builtin.include_tasks: install.yml
   when: manage_netplan_install
 
-- name: "Netplan | Import remove_existing.yml"
+- name: "Import remove_existing.yml"
   ansible.builtin.include_tasks: remove_existing.yml
   when: manage_netplan_remove_existing
 
-- name: "Netplan | Import configure.yml"
+- name: "Import configure.yml"
   ansible.builtin.include_tasks: configure.yml
 
-- name: "Netplan | Generate netplan configuration"
+- name: "Generate netplan configuration"
   ansible.builtin.command:
     cmd: netplan generate
   changed_when: false
   when: _manage_netplan_need_generate
 
-- name: "Netplan | Apply netplan configuration"
+- name: "Apply netplan configuration"
   ansible.builtin.command:
     cmd: netplan apply
   changed_when: false

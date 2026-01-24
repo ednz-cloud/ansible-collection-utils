@@ -1,7 +1,7 @@
 ---
 # meta file for docker_systemd_service
 galaxy_info:
-  namespace: "ednz_cloud.utils"
+  namespace: "ednz_cloud"
   role_name: "docker_systemd_service"
   author: "Bertrand Lanson"
   description: "Create Systemd services for docker containers."

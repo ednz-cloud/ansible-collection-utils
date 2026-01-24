@@ -1,6 +1,4 @@
 ---
-# vars file for motd
-
 # title: motd directory path
 # required: false
 # description-lines:

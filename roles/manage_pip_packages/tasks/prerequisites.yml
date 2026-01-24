@@ -1,6 +1,6 @@
 ---
 # task/prerequisites file for manage_pip_packages
-- name: "Pip3 | Merge required system package lists"
+- name: "prerequisites | Merge required system package lists"
   ansible.builtin.set_fact:
     manage_pip_packages_required_packages: >-
       {{
@@ -10,7 +10,7 @@
           else []
         )
       }}
-- name: "Install python3 and pip"
+- name: "prerequisites | Install python3 and pip"
   ansible.builtin.include_role:
     name: ednz_cloud.utils.manage_apt_packages
   vars:
