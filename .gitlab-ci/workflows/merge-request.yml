@@ -1,0 +1,239 @@
+---
+# yaml-language-server: $schema=https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json
+e2e-tests:pre:set-molecule-env:
+  stage: e2e-tests:pre
+  image: alpine:3.23.2
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+  variables:
+    OS_AUTH_TYPE: v3applicationcredential
+    OS_INTERFACE: public
+  script:
+    - echo "OS_AUTH_TYPE=${OS_AUTH_TYPE}" >> e2e-tests:pre:set-molecule-env.env
+    - echo "OS_INTERFACE=${OS_INTERFACE}" >> e2e-tests:pre:set-molecule-env.env
+  artifacts:
+    expire_in: 1 hour
+    reports:
+      dotenv: e2e-tests:pre:set-molecule-env.env
+    access: none
+
+include:
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/vault-get-secrets.yml
+    inputs:
+      stage: e2e-tests:pre
+      identifier: pcp-w3rxsrj-dc4-a
+      vault_addr: $VAULT_ADDR
+      vault_approle_id: $VAULT_APPROLE_ID
+      vault_approle_secret_id: $VAULT_APPROLE_SECRET_ID
+      vault_secrets: |
+        kv/data/infrastructure/openstack/regions/dc4_a auth_url | OS_AUTH_URL
+        kv/data/infrastructure/openstack/regions/dc4_a identity_api_version | OS_IDENTITY_API_VERSION
+        kv/data/infrastructure/openstack/regions/dc4_a region_name | OS_REGION_NAME
+        kv/data/infrastructure/openstack/projects/pcp_w3rxsrj/users/tofu application_credential_id | OS_APPLICATION_CREDENTIAL_ID
+        kv/data/infrastructure/openstack/projects/pcp_w3rxsrj/users/tofu application_credential_secret | OS_APPLICATION_CREDENTIAL_SECRET
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: dns
+      scenarios:
+        - dns__default__openstack
+        - dns__manual__openstack
+        - dns__systemd_options__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/dns/**
+            - molecule/dns__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: docker_systemd_service
+      scenarios:
+        - docker_systemd_service__default__openstack
+        - docker_systemd_service__with_custom_flags__openstack
+        - docker_systemd_service__with_extra_files__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/docker_systemd_service/**
+            - molecule/docker_systemd_service__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: install_docker
+      scenarios:
+        - install_docker__default__openstack
+        - install_docker__install_all__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/install_docker/**
+            - molecule/install_docker__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: manage_apt_packages
+      scenarios:
+        - manage_apt_packages__default__openstack
+        - manage_apt_packages__with_custom_packages__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/manage_apt_packages/**
+            - molecule/manage_apt_packages__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: manage_netplan
+      scenarios:
+        - manage_netplan__default__openstack
+        - manage_netplan__with_custom_config__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/manage_netplan/**
+            - molecule/manage_netplan__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: manage_pip_packages
+      scenarios:
+        - manage_pip_packages__default__openstack
+        - manage_pip_packages__with_venv__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/manage_pip_packages/**
+            - molecule/manage_pip_packages__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: manage_repositories
+      scenarios:
+        - manage_repositories__default__openstack
+        - manage_repositories__with_custom_repositories__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/manage_repositories/**
+            - molecule/manage_repositories__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: motd
+      scenarios:
+        - motd__default__openstack
+        - motd__production_warning__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/motd/**
+            - molecule/motd__*/**

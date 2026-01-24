@@ -2,9 +2,15 @@
 **/__pycache__
 .vscode
 roles/ednz_cloud.*
-tests/output
-.ansible
-collections
+molecule/**/k3s_secret.yml
 
-# ignore act local secrets file
-.secrets
+tests/output
+
+.ruff_cache
+
+# ignore local ansible test files
+.ansible
+.env
+
+# ignore gitlab-ci-local files
+.gitlab-ci-local-variables.yml

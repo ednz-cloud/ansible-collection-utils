@@ -1,4 +1,8 @@
 ---
+# yaml-language-server: $schema=https://json.schemastore.org/pre-commit-config.json
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -18,10 +22,25 @@ repos:
         stages:
           - post-commit
           - push
-  - repo: local
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.14
     hooks:
-      - id: docsible-check
-        name: Ensure docsible documentation is up-to-date
-        entry: ./.gitea/scripts/pre-commit-docsible.sh
-        language: script
-        pass_filenames: false
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.26
+    hooks:
+      - id: uv-lock
+        name: check uv lockfile
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.36.0
+    hooks:
+      - id: check-gitlab-ci
+        name: validate gitlab-ci workflows
+        files: >
+          (?x)^(
+            .*\.gitlab-ci\.(yml|yaml)|
+            \.gitlab-ci/actions/[^/]+|
+            \.gitlab-ci/workflows/[^/]+
+          )$
