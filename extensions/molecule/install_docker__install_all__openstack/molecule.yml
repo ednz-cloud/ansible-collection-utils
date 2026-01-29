@@ -1,10 +1,4 @@
 ---
-dependency:
-  name: galaxy
-  options:
-    requirements-file: ./requirements.yml
-driver:
-  name: openstack
 platforms:
   - name: molecule__install_docker__install_all__openstack.ednz.fr
     description: Molecule test instance.
@@ -26,26 +20,5 @@ platforms:
           port_max: 0
           cidr: 0.0.0.0/0
           type: IPv4
-provisioner:
-  name: ansible
-  config_options:
-    defaults:
-      remote_tmp: /tmp/.ansible
-  env:
-    ANSIBLE_ROLES_PATH: ../../roles/
-verifier:
-  name: ansible
 scenario:
   name: install_docker__install_all__openstack
-  test_sequence:
-    - dependency
-    - cleanup
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - verify
-    - cleanup
-    - destroy
