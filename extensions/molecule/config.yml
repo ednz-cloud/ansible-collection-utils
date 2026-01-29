@@ -4,8 +4,8 @@ driver:
 dependency:
   name: galaxy
   options:
-    role-file: extensions/molecule/requirements.yml
-    requirements-file: extensions/molecule/requirements.yml
+    role-file: requirements.yml
+    requirements-file: requirements.yml
 provisioner:
   name: ansible
   playbooks:
