@@ -60,7 +60,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/dns/**
-            - molecule/dns__*/**
+            - extensions/molecule/dns__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -86,7 +86,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/docker_systemd_service/**
-            - molecule/docker_systemd_service__*/**
+            - extensions/molecule/docker_systemd_service__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -111,7 +111,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/install_docker/**
-            - molecule/install_docker__*/**
+            - extensions/molecule/install_docker__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -136,7 +136,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/manage_apt_packages/**
-            - molecule/manage_apt_packages__*/**
+            - extensions/molecule/manage_apt_packages__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -161,7 +161,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/manage_netplan/**
-            - molecule/manage_netplan__*/**
+            - extensions/molecule/manage_netplan__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -186,7 +186,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/manage_pip_packages/**
-            - molecule/manage_pip_packages__*/**
+            - extensions/molecule/manage_pip_packages__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -211,7 +211,7 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/manage_repositories/**
-            - molecule/manage_repositories__*/**
+            - extensions/molecule/manage_repositories__*/**
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
@@ -236,4 +236,4 @@ include:
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
           changes:
             - roles/motd/**
-            - molecule/motd__*/**
+            - extensions/molecule/motd__*/**
