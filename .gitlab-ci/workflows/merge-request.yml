@@ -47,8 +47,8 @@ include:
         - dns__manual__openstack
         - dns__systemd_options__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -73,8 +73,8 @@ include:
         - docker_systemd_service__with_custom_flags__openstack
         - docker_systemd_service__with_extra_files__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -98,8 +98,8 @@ include:
         - install_docker__default__openstack
         - install_docker__install_all__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -123,8 +123,8 @@ include:
         - manage_apt_packages__default__openstack
         - manage_apt_packages__with_custom_packages__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -148,8 +148,8 @@ include:
         - manage_netplan__default__openstack
         - manage_netplan__with_custom_config__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -173,8 +173,8 @@ include:
         - manage_pip_packages__default__openstack
         - manage_pip_packages__with_venv__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -198,8 +198,8 @@ include:
         - manage_repositories__default__openstack
         - manage_repositories__with_custom_repositories__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
@@ -223,8 +223,8 @@ include:
         - motd__default__openstack
         - motd__production_warning__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 11 bullseye","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
