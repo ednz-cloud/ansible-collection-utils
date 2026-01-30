@@ -1,0 +1,25 @@
+---
+# title: Action
+# required: true
+# description-lines:
+# The action to perform: "create" or "destroy".
+molecule_openstack_platforms_action: ""
+
+# title: Platforms list
+# required: true
+# description-lines:
+# List of platform definitions describing the OpenStack resources to manage.
+# Same schema as molecule_yml.platforms.
+molecule_openstack_platforms_list: []
+
+# title: UUID
+# required: true
+# description-lines:
+# Molecule run UUID used to uniquely name resources.
+molecule_openstack_platforms_uuid: ""
+
+# title: Key name
+# required: true
+# description-lines:
+# Name for the SSH keypair.
+molecule_openstack_platforms_key_name: ""

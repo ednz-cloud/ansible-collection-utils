@@ -13,6 +13,7 @@ dependencies:
   community.docker: ">4.6.0"
   ansible.posix: ">1.6.0"
   community.general: ">10.5.0"
+  openstack.cloud: ">2.4.0"
 repository: https://git.ednz.fr/ansible-collections/ednz_cloud.utils.git
 documentation: http://docs.example.com
 homepage: http://example.com

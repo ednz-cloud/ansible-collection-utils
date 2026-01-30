@@ -1,0 +1,133 @@
+---
+- name: "create | Create security group"
+  openstack.cloud.security_group:
+    name: "molecule-test-{{ item.security_group.name }}-{{ molecule_openstack_platforms_uuid }}"
+    description: "{{ item.security_group.description | default('Molecule Test') }}"
+  when:
+    - item.security_group is defined
+    - item.security_group.name is defined
+    - item.security_group.create | default(true)
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "create | Create security group rules"
+  openstack.cloud.security_group_rule:
+    security_group: "molecule-test-{{ item.0.security_group.name }}-{{ molecule_openstack_platforms_uuid }}"
+    protocol: "{{ item.1.proto }}"
+    ethertype: "{{ item.1.type | default('IPv4', true) }}"
+    port_range_min: "{{ item.1.port_min | default(item.1.port, true) | int }}"
+    port_range_max: "{{ item.1.port_max | default(item.1.port, true) | int }}"
+    remote_ip_prefix: "{{ item.1.cidr | default(omit) }}"
+  when:
+    - item.0.security_group is defined
+    - item.0.security_group.create | default(true)
+    - "'rules' in item.0.security_group"
+  loop: "{{ molecule_openstack_platforms_list | subelements('security_group.rules', skip_missing=True) }}"
+
+- name: "create | Create network"
+  openstack.cloud.network:
+    name: "molecule-test-{{ item.network.name }}-{{ molecule_openstack_platforms_uuid }}"
+    state: present
+    external: "{{ item.network.external | default(omit) }}"
+  when:
+    - item.network is defined
+    - item.network.name is defined
+    - item.network.create | default(true)
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "create | Create subnet in network"
+  openstack.cloud.subnet:
+    name: "molecule-test-{{ item.network.subnet.name }}-{{ molecule_openstack_platforms_uuid }}"
+    state: present
+    network_name: "molecule-test-{{ item.network.name }}-{{ molecule_openstack_platforms_uuid }}"
+    cidr: "{{ item.network.subnet.cidr }}"
+    ip_version: "{{ item.network.subnet.ipv | default(4) | int }}"
+    dns_nameservers: "{{ item.network.subnet.dns_nameservers | default(omit) }}"
+    host_routes: "{{ item.network.subnet.host_routes | default(omit) }}"
+  when:
+    - item.network is defined
+    - item.network.name is defined
+    - item.network.create | default(true)
+    - item.network.subnet is defined
+    - item.network.subnet.name is defined
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "create | Create router"
+  openstack.cloud.router:
+    name: "molecule-test-{{ item.network.router.name }}-{{ molecule_openstack_platforms_uuid }}"
+    state: present
+    network: "{{ item.network.router.ext_network | default(omit) }}"
+    enable_snat: "{{ item.network.router.snat | default(omit) }}"
+    interfaces:
+      - net: "molecule-test-{{ item.network.name }}-{{ molecule_openstack_platforms_uuid }}"
+        subnet: "molecule-test-{{ item.network.subnet.name }}-{{ molecule_openstack_platforms_uuid }}"
+  when:
+    - item.network is defined
+    - item.network.name is defined
+    - item.network.create | default(true)
+    - item.network.router is defined
+    - item.network.router.name is defined
+    - item.network.subnet is defined
+    - item.network.subnet.name is defined
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "create | Create SSH keypair"
+  openstack.cloud.keypair:
+    name: "{{ molecule_openstack_platforms_key_name }}"
+    state: present
+  register: molecule_openstack_platforms_keypair
+
+- name: "create | Create OpenStack instance (async)"
+  openstack.cloud.server:
+    state: present
+    name: "molecule-test-{{ item.name }}-{{ molecule_openstack_platforms_uuid }}"
+    description: "{{ item.description | default('Molecule test instance') }}"
+    image: "{{ item.image }}"
+    key_name: "{{ molecule_openstack_platforms_key_name }}"
+    flavor: "{{ item.flavor }}"
+    floating_ip_pools: >-
+      {{ item.floating_ip_pools if item.floating_ip_pools is defined and item.floating_ip_pools | length > 0 else omit }}
+    auto_ip: "{{ item.auto_ip if item.auto_ip is defined else omit }}"
+    boot_from_volume: "{{ true if item.volume is defined and item.volume.size else false }}"
+    terminate_volume: "{{ true if item.volume is defined and item.volume.size else false }}"
+    volume_size: "{{ item.volume.size if item.volume is defined and item.volume.size else omit }}"
+    network: >-
+      {{
+        'molecule-test-' + item.network.name + '-' + molecule_openstack_platforms_uuid
+        if item.network is defined and item.network.name and (item.network.create | default(true))
+        else item.network.name
+        if item.network is defined and item.network.name and not (item.network.create | default(true))
+        else 'public'
+      }}
+    security_groups:
+      - >-
+        {{
+          'molecule-test-' + item.security_group.name + '-' + molecule_openstack_platforms_uuid
+          if item.security_group is defined and item.security_group.name and (item.security_group.create | default(true))
+          else item.security_group.name
+          if item.security_group is defined and item.security_group.name and not (item.security_group.create | default(true))
+          else 'default'
+        }}
+    meta:
+      user: "{{ item.user }}"
+      molecule_instance: "{{ item.name }}"
+      network: >-
+        {{
+          'molecule-test-' + item.network.name + '-' + molecule_openstack_platforms_uuid
+          if item.network is defined and item.network.name and (item.network.create | default(true))
+          else item.network.name
+          if item.network is defined and item.network.name and not (item.network.create | default(true))
+          else 'public'
+        }}
+  loop: "{{ molecule_openstack_platforms_list }}"
+  async: 300
+  poll: 0
+  register: molecule_openstack_platforms_server_jobs
+
+- name: "create | Wait for instance creation"
+  ansible.builtin.async_status:
+    jid: "{{ item.ansible_job_id }}"
+  register: molecule_openstack_platforms_server_results
+  until: molecule_openstack_platforms_server_results is finished
+  retries: 30
+  delay: 10
+  loop: "{{ molecule_openstack_platforms_server_jobs.results }}"

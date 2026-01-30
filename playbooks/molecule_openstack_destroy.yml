@@ -1,0 +1,26 @@
+---
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tags:
+    - always
+  tasks:
+    - name: Include molecule vars
+      ansible.builtin.include_tasks:
+        file: tasks/vars.yml
+
+    - name: Destroy OpenStack resources
+      ansible.builtin.include_role:
+        name: ednz_cloud.utils.molecule_openstack_platforms
+      vars:
+        molecule_openstack_platforms_action: destroy
+        molecule_openstack_platforms_list: "{{ molecule_yml.platforms }}"
+        molecule_openstack_platforms_uuid: "{{ uuid }}"
+        molecule_openstack_platforms_key_name: "{{ key_name }}"
+
+    - name: Delete local SSH key
+      ansible.builtin.file:
+        name: "{{ identity_file }}"
+        state: absent

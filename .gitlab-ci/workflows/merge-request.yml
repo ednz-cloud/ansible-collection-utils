@@ -41,6 +41,28 @@ include:
     file: includes/molecule-e2e-tests.yml
     inputs:
       stage: e2e-tests
+      identifier: molecule_openstack_platforms
+      scenarios:
+        - molecule_openstack_platforms__default__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/molecule_openstack_platforms/**
+            - playbooks/**
+            - extensions/molecule/molecule_openstack_platforms__*/**
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
       identifier: dns
       scenarios:
         - dns__default__openstack

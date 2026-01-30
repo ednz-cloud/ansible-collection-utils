@@ -1,0 +1,183 @@
+---
+argument_specs:
+  main:
+    short_description: "Manage OpenStack resources for Molecule test scenarios."
+    description:
+      - >-
+        Creates or destroys OpenStack resources
+        (security groups, networks, subnets, routers, keypairs, instances) for Molecule test scenarios.
+    options:
+      molecule_openstack_platforms_action:
+        type: str
+        required: true
+        choices:
+          - create
+          - destroy
+        description: "The action to perform: create or destroy OpenStack resources."
+
+      molecule_openstack_platforms_list:
+        type: list
+        required: true
+        elements: dict
+        description: "List of platform definitions describing the OpenStack resources to manage."
+        options:
+          name:
+            type: str
+            required: true
+            description: "Name of the instance."
+          image:
+            type: str
+            required: true
+            description: "OpenStack image to use for the instance."
+          flavor:
+            type: str
+            required: true
+            description: "OpenStack flavor for the instance."
+          user:
+            type: str
+            required: true
+            description: "SSH user for the instance."
+          auto_ip:
+            type: bool
+            required: false
+            description: "Whether to auto-assign a floating IP."
+          floating_ip_pools:
+            type: list
+            required: false
+            elements: str
+            description: "List of floating IP pools to use."
+          description:
+            type: str
+            required: false
+            description: "Description for the instance."
+          volume:
+            type: dict
+            required: false
+            description: "Volume configuration for boot-from-volume instances."
+            options:
+              size:
+                type: int
+                required: true
+                description: "Volume size in GB."
+          network:
+            type: dict
+            required: false
+            description: "Network configuration for the instance."
+            options:
+              name:
+                type: str
+                required: true
+                description: "Name of the network."
+              create:
+                type: bool
+                required: false
+                default: true
+                description: "Whether to create the network or use an existing one."
+              external:
+                type: bool
+                required: false
+                description: "Whether the network is external."
+              subnet:
+                type: dict
+                required: false
+                description: "Subnet configuration."
+                options:
+                  name:
+                    type: str
+                    required: true
+                    description: "Name of the subnet."
+                  cidr:
+                    type: str
+                    required: true
+                    description: "CIDR block for the subnet."
+                  ipv:
+                    type: int
+                    required: false
+                    default: 4
+                    description: "IP version (4 or 6)."
+                  dns_nameservers:
+                    type: list
+                    required: false
+                    elements: str
+                    description: "List of DNS nameservers."
+                  host_routes:
+                    type: list
+                    required: false
+                    elements: dict
+                    description: "List of host routes."
+              router:
+                type: dict
+                required: false
+                description: "Router configuration."
+                options:
+                  name:
+                    type: str
+                    required: true
+                    description: "Name of the router."
+                  ext_network:
+                    type: str
+                    required: false
+                    description: "External network for the router."
+                  snat:
+                    type: bool
+                    required: false
+                    description: "Whether to enable SNAT on the router."
+          security_group:
+            type: dict
+            required: false
+            description: "Security group configuration."
+            options:
+              name:
+                type: str
+                required: true
+                description: "Name of the security group."
+              create:
+                type: bool
+                required: false
+                default: true
+                description: "Whether to create the security group or use an existing one."
+              description:
+                type: str
+                required: false
+                description: "Description for the security group."
+              rules:
+                type: list
+                required: false
+                elements: dict
+                description: "List of security group rules."
+                options:
+                  proto:
+                    type: str
+                    required: true
+                    description: "Protocol (tcp, udp, icmp, etc.)."
+                  port:
+                    type: int
+                    required: false
+                    description: "Single port number (used for both min and max if not specified separately)."
+                  port_min:
+                    type: int
+                    required: false
+                    description: "Minimum port number."
+                  port_max:
+                    type: int
+                    required: false
+                    description: "Maximum port number."
+                  cidr:
+                    type: str
+                    required: false
+                    description: "CIDR notation for allowed source IP range (e.g. 0.0.0.0/0)."
+                  type:
+                    type: str
+                    required: false
+                    default: "IPv4"
+                    description: "Ethertype (IPv4 or IPv6)."
+
+      molecule_openstack_platforms_uuid:
+        type: str
+        required: true
+        description: "Molecule run UUID used to uniquely name resources."
+
+      molecule_openstack_platforms_key_name:
+        type: str
+        required: true
+        description: "Name for the SSH keypair."

@@ -1,0 +1,4 @@
+---
+- name: "Include {{ molecule_openstack_platforms_action }}"
+  ansible.builtin.include_tasks:
+    file: "{{ molecule_openstack_platforms_action }}.yml"

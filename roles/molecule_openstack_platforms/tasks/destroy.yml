@@ -1,0 +1,58 @@
+---
+- name: "destroy | Destroy OpenStack instance (async)"
+  openstack.cloud.server:
+    state: absent
+    name: "molecule-test-{{ item.name }}-{{ molecule_openstack_platforms_uuid }}"
+    delete_fip: true
+  loop: "{{ molecule_openstack_platforms_list }}"
+  async: 300
+  poll: 0
+  register: molecule_openstack_platforms_destroy_jobs
+
+- name: "destroy | Wait for instance destruction"
+  ansible.builtin.async_status:
+    jid: "{{ item.ansible_job_id }}"
+  register: molecule_openstack_platforms_destroy_results
+  until: molecule_openstack_platforms_destroy_results is finished
+  retries: 30
+  delay: 10
+  loop: "{{ molecule_openstack_platforms_destroy_jobs.results }}"
+
+- name: "destroy | Delete SSH keypair"
+  openstack.cloud.keypair:
+    name: "{{ molecule_openstack_platforms_key_name }}"
+    state: absent
+
+- name: "destroy | Delete security groups"
+  openstack.cloud.security_group:
+    state: absent
+    name: "molecule-test-{{ item.security_group.name }}-{{ molecule_openstack_platforms_uuid }}"
+  when:
+    - item.security_group is defined
+    - item.security_group.create | default(true)
+    - item.security_group.name is defined
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "destroy | Destroy router"
+  openstack.cloud.router:
+    name: "molecule-test-{{ item.network.router.name }}-{{ molecule_openstack_platforms_uuid }}"
+    state: absent
+  when:
+    - item.network is defined
+    - item.network.name is defined
+    - item.network.create | default(true)
+    - item.network.router is defined
+    - item.network.router.name is defined
+    - item.network.subnet is defined
+    - item.network.subnet.name is defined
+  loop: "{{ molecule_openstack_platforms_list }}"
+
+- name: "destroy | Delete network"
+  openstack.cloud.network:
+    name: "molecule-test-{{ item.network.name }}-{{ molecule_openstack_platforms_uuid }}"
+    state: absent
+  when:
+    - item.network is defined
+    - item.network.create | default(true)
+    - item.network.name is defined
+  loop: "{{ molecule_openstack_platforms_list }}"

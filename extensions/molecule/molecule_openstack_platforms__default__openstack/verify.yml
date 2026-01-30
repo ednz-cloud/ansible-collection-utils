@@ -1,0 +1,72 @@
+---
+- name: Verify
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Include molecule vars
+      ansible.builtin.include_tasks:
+        file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/playbooks/tasks/vars.yml"
+
+    - name: "Test: security group"
+      block:
+        - name: "Verify security group exists"
+          openstack.cloud.security_group_info:
+            name: "molecule-test-molecule__molecule_openstack_platforms__default__openstack-{{ uuid }}"
+          register: _verify_sg
+
+        - name: "Assert security group was created"
+          ansible.builtin.assert:
+            that:
+              - _verify_sg.security_groups | length > 0
+
+    - name: "Test: SSH keypair"
+      block:
+        - name: "Verify SSH keypair exists"
+          openstack.cloud.keypair_info:
+            name: "{{ key_name }}"
+          register: _verify_kp
+
+        - name: "Assert SSH keypair was created"
+          ansible.builtin.assert:
+            that:
+              - _verify_kp.keypairs | length > 0
+
+    - name: "Test: server"
+      block:
+        - name: "Verify server exists"
+          openstack.cloud.server_info:
+            server: "molecule-test-molecule__molecule_openstack_platforms__default__openstack.ednz.fr-{{ uuid }}"
+          register: _verify_server
+
+        - name: "Assert server is active"
+          ansible.builtin.assert:
+            that:
+              - _verify_server.servers | length > 0
+              - _verify_server.servers[0].status == 'ACTIVE'
+
+    - name: "Test: instance config"
+      block:
+        - name: "Verify instance config file exists"
+          ansible.builtin.stat:
+            path: "{{ molecule_instance_config }}"
+          register: _verify_instance_config
+
+        - name: "Assert instance config was written"
+          ansible.builtin.assert:
+            that:
+              - _verify_instance_config.stat.exists
+
+        - name: "Load instance config"
+          ansible.builtin.set_fact:
+            _instance_config: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+
+        - name: "Assert instance config has expected structure"
+          ansible.builtin.assert:
+            that:
+              - _instance_config | length > 0
+              - _instance_config[0].instance is defined
+              - _instance_config[0].address is defined
+              - _instance_config[0].user is defined
+              - _instance_config[0].port is defined
+              - _instance_config[0].identity_file is defined

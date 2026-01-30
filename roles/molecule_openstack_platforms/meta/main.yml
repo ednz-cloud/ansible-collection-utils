@@ -1,0 +1,25 @@
+---
+# meta file for molecule_openstack_platforms
+galaxy_info:
+  namespace: "ednz_cloud"
+  role_name: "molecule_openstack_platforms"
+  author: "Bertrand Lanson"
+  description: "Manage OpenStack resources for Molecule test scenarios."
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+
+  galaxy_tags:
+    - "molecule"
+    - "openstack"
+    - "testing"
+
+dependencies: []
