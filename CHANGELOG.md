@@ -1,3 +1,9 @@
+## v0.11.0 (2026-01-30)
+
+### Feat
+
+- **molecule**: add reusable molecule create/destroy playbooks to replace openstack driver
+
 ## v0.10.2 (2025-12-30)
 
 ### Fix
