@@ -171,7 +171,10 @@ argument_specs:
                     required: false
                     default: "IPv4"
                     description: "Ethertype (IPv4 or IPv6)."
-
+          groups:
+            type: list
+            required: false
+            description: "List of groups to set for the instance in molecule inventory"
       molecule_openstack_platforms_uuid:
         type: str
         required: true

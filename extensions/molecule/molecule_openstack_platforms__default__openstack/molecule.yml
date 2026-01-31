@@ -20,6 +20,8 @@ platforms:
           port_max: 0
           cidr: 0.0.0.0/0
           type: IPv4
+    groups:
+      - test_group
 scenario:
   name: molecule_openstack_platforms__default__openstack
   test_sequence:
