@@ -1,3 +1,9 @@
+## v0.11.1 (2026-01-31)
+
+### Fix
+
+- **roles/molecule_openstack_platforms**: allow passing groups to platform spec
+
 ## v0.11.0 (2026-01-30)
 
 ### Feat
