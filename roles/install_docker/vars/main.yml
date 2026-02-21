@@ -44,6 +44,14 @@ install_docker_architecture_map:
   armv7l: "armhf"
   armv6l: "armhf"
 
+# title: Docker required packages
+# required: false
+# description: Required system packages for docker to install properly
+install_docker_system_packages_list:
+  - name: iptables
+    version: latest
+    state: present
+
 # title: Python packages for Docker support
 # required: false
 # description: List of Python packages required for Docker Ansible modules
@@ -83,7 +91,8 @@ install_docker_github_project: moby/moby
 # title: Docker release repository URL
 # required: false
 # description: URL to fetch Docker static binaries based on system architecture
-install_docker_repository_url: "https://download.docker.com/linux/static/stable/\
+install_docker_repository_url:
+  "https://download.docker.com/linux/static/stable/\
   {{ install_docker_architecture_map[ansible_architecture] | default(ansible_architecture) }}"
 
 # title: GitHub project for Docker Compose

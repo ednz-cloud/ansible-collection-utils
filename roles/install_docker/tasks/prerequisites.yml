@@ -20,3 +20,9 @@
     owner: root
     group: root
     mode: "0710"
+
+- name: "prerequisites | Install required packages"
+  ansible.builtin.include_role:
+    name: ednz_cloud.utils.manage_apt_packages
+  vars:
+    manage_apt_packages_list: "{{ install_docker_system_packages_list }}"
