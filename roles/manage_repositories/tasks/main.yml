@@ -5,12 +5,12 @@
 
 - name: "Load variables"
   ansible.builtin.include_vars:
-    file: "{{ ansible_distribution | lower }}.yml"
+    file: "{{ ansible_facts['distribution'] | lower }}.yml"
 
 - name: "Import prerequisites.yml"
   ansible.builtin.include_tasks: prerequisites.yml
 
-- name: "Import main repositories for {{ ansible_distribution | lower }}"
+- name: "Import main repositories for {{ ansible_facts['distribution'] | lower }}"
   ansible.builtin.include_tasks: "main_repositories.yml"
   when: manage_repositories_enable_default_repo
 

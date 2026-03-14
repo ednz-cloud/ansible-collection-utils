@@ -28,24 +28,24 @@
         - name: "Verify file /etc/apt/sources.list"
           vars:
             expected_source_list_content: |
-              # See /etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources
+              # See /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}.sources
           ansible.builtin.assert:
             that:
               - "(slurp_etc_apt_sources_list.content|b64decode) == expected_source_list_content"
 
-    - name: "Test: file /etc/apt/sources.list.d/{{ ansible_distribution | lower }}"
+    - name: "Test: file /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}"
       block:
-        - name: "Stat /etc/apt/sources.list.d/{{ ansible_distribution | lower }}"
+        - name: "Stat /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}"
           ansible.builtin.stat:
-            path: "/etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources"
+            path: "/etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}.sources"
           register: stat_etc_apt_sources_list_d
 
-        - name: "Slurp file /etc/apt/sources.list.d/{{ ansible_distribution | lower }}"
+        - name: "Slurp file /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}"
           ansible.builtin.slurp:
-            src: "/etc/apt/sources.list.d/{{ ansible_distribution | lower }}.sources"
+            src: "/etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}.sources"
           register: slurp_etc_apt_sources_list_d
 
-        - name: "Verify file /etc/apt/sources.list.d/{{ ansible_distribution | lower }}"
+        - name: "Verify file /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}"
           ansible.builtin.assert:
             that:
               - stat_etc_apt_sources_list_d.stat.exists
@@ -54,7 +54,7 @@
               - stat_etc_apt_sources_list_d.stat.gr_name == 'root'
               - stat_etc_apt_sources_list_d.stat.mode == '0644'
 
-        - name: "Verify file /etc/apt/sources.list.d/{{ ansible_distribution | lower }}"
+        - name: "Verify file /etc/apt/sources.list.d/{{ ansible_facts['distribution'] | lower }}"
           vars:
             expected_source_list_content:
               ubuntu:
@@ -62,24 +62,24 @@
                 - "Types: deb"
                 - "URIs: http://fr.archive.ubuntu.com/ubuntu"
                 - >-
-                  Suites: {{ ansible_distribution_release }}
-                  {{ ansible_distribution_release }}-security
-                  {{ ansible_distribution_release }}-updates
-                  {{ ansible_distribution_release }}-backports
+                  Suites: {{ ansible_facts['distribution_release'] }}
+                  {{ ansible_facts['distribution_release'] }}-security
+                  {{ ansible_facts['distribution_release'] }}-updates
+                  {{ ansible_facts['distribution_release'] }}-backports
                 - "Components: main restricted universe multiverse"
               debian:
                 - "X-Repolib-Name: debian"
                 - "Types: deb"
                 - "URIs: http://deb.debian.org/debian"
                 - >-
-                  Suites: {{ ansible_distribution_release }}
-                  {{ ansible_distribution_release }}-updates
-                  {{ ansible_distribution_release }}-backports
+                  Suites: {{ ansible_facts['distribution_release'] }}
+                  {{ ansible_facts['distribution_release'] }}-updates
+                  {{ ansible_facts['distribution_release'] }}-backports
                 - "Components: main"
           ansible.builtin.assert:
             that:
               - "item in (slurp_etc_apt_sources_list_d.content|b64decode)"
-          loop: "{{ expected_source_list_content[ansible_distribution | lower] }}"
+          loop: "{{ expected_source_list_content[ansible_facts['distribution'] | lower] }}"
 
     - name: "Test: directory /etc/apt/sources.list.d"
       block:
@@ -123,8 +123,8 @@
             expected_source_list_docker_content:
               - "X-Repolib-Name: docker"
               - "Types: deb"
-              - "URIs: https://download.docker.com/linux/{{ ansible_distribution | lower }}"
-              - "Suites: {{ ansible_distribution_release }}"
+              - "URIs: https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+              - "Suites: {{ ansible_facts['distribution_release'] }}"
               - "Components: stable"
               - "Signed-By: /etc/apt/keyrings/docker.asc"
           ansible.builtin.assert:
@@ -160,7 +160,7 @@
               - "X-Repolib-Name: hashicorp"
               - "Types: deb"
               - "URIs: https://apt.releases.hashicorp.com"
-              - "Suites: {{ ansible_distribution_release }}"
+              - "Suites: {{ ansible_facts['distribution_release'] }}"
               - "Components: main"
               - "Signed-By: /etc/apt/keyrings/hashicorp.asc"
           ansible.builtin.assert:

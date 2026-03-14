@@ -22,7 +22,7 @@
         owner: root
         group: root
         mode: "0644"
-      when: _manage_repositories_current_source_list_str == ''
+      when: (_manage_repositories_current_source_list_str | trim) | length == 0
 
     - name: "main_repositories | Replace content of /etc/apt/sources.list"
       ansible.builtin.replace:
@@ -31,7 +31,7 @@
         replace: "{{ _manage_repositories_new_source_list }}"
       when: _manage_repositories_current_source_list_str != _manage_repositories_new_source_list
 
-- name: "main_repositories | Configure main repositories into sources.list.d for {{ ansible_distribution | lower }} "
+- name: "main_repositories | Configure main repositories into sources.list.d for {{ ansible_facts['distribution'] | lower }} "
   ansible.builtin.deb822_repository:
     name: "{{ item.name }}"
     types: "{{ item.types }}"
