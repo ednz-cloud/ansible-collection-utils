@@ -51,7 +51,7 @@
           install_docker_compose_github_project,
           'releases/download',
           'v' ~ install_docker_compose_wanted_version,
-          'docker-compose-linux-' ~ ansible_architecture
+          'docker-compose-linux-' ~ ansible_facts['architecture']
         ] | join('/')
       }}
     dest: "{{ install_docker_compose_path }}"

@@ -7,7 +7,7 @@
     owner: root
     group: root
     backup: true
-  when: manage_netplan_configuration
+  when: manage_netplan_configuration | length > 0
   register: _manage_netplan_configuration
 
 - name: "configure | Set generate-check and apply-check variables"

@@ -58,4 +58,4 @@
   loop: "{{ install_docker_service_list }}"
   when:
     - install_docker_start_service
-    - vars['_install_docker_service_'~item~'_need_restart']
+    - lookup('ansible.builtin.vars', '_install_docker_service_' + item + '_need_restart')
