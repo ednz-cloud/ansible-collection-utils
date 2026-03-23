@@ -1,0 +1,102 @@
+---
+# defaults file for podman_systemd_service
+
+# title: Podman container name
+# required: true
+# description-lines:
+# Name of the Podman container to be managed by the systemd service.
+# Used as the basis for the quadlet .container file name and the generated systemd unit.
+podman_systemd_service_name: "my_service"
+
+# title: Container image
+# required: true
+# description-lines:
+# Name of the container image to use.
+# This can include a tag (e.g., 'nginx:latest') or a full registry URI.
+podman_systemd_service_image:
+
+# title: Container environment variables
+# required: false
+# description-lines:
+# Dictionary of environment variables to pass into the container.
+# Keys are variable names and values are strings or Jinja2 expressions.
+podman_systemd_service_env: {}
+
+# title: Systemd unit options
+# required: false
+# description-lines:
+# Dictionary of options for the [Unit] section of the quadlet .container file.
+# These are merged with the defaults defined in podman_systemd_service_unit_options_default.
+podman_systemd_service_unit_options: {}
+
+# title: Podman container options
+# required: false
+# description-lines:
+# Dictionary of options for the [Container] section of the quadlet .container file.
+# These map directly to podman-systemd.unit(5) Container section directives.
+# Common options: PublishPort, Volume, Network, Label, Exec, etc.
+# These are merged with the defaults defined in podman_systemd_service_container_options_default.
+podman_systemd_service_container_options: {}
+
+# title: Systemd service options
+# required: false
+# description-lines:
+# Dictionary of options for the [Service] section of the quadlet .container file.
+# Can include options like Restart, TimeoutStartSec, etc.
+# These are merged with the defaults defined in podman_systemd_service_service_options_default.
+podman_systemd_service_service_options: {}
+
+# title: Systemd install options
+# required: false
+# description-lines:
+# Dictionary of options for the [Install] section of the quadlet .container file.
+# Typically includes settings like WantedBy=multi-user.target.
+# These are merged with the defaults defined in podman_systemd_service_install_options_default.
+podman_systemd_service_install_options: {}
+
+# title: Pull image before running
+# required: false
+# description-lines:
+# If true, pulls the latest version of the container image before starting the service.
+podman_systemd_service_pull_image: true
+
+# title: Force pull from source registry
+# required: false
+# description-lines:
+# If true, forces a fresh image pull even if a local image with the same tag exists.
+# If false, the pull is skipped when the image is already present locally.
+podman_systemd_service_pull_force: false
+
+# title: Start the systemd service
+# required: false
+# description-lines:
+# If true, ensures the systemd service is started and enabled after configuration.
+# If false, the service will be enabled but not started.
+podman_systemd_service_start: true
+
+# title: Extra files to copy
+# required: false
+# description-lines:
+# List of extra files to copy to the target host, required by the service.
+# Each item should be a dictionary like:
+#   - src: path/to/source/file
+#     dest: path/to/destination/file
+#     mode: '0644'  # Optional, default is '0644'
+#     owner: 'user'  # Optional, default is 'root'
+#     group: 'group'  # Optional, default is 'root'
+#     on_change: 'restart'  # Optional, can be 'restart' or 'reload', default is 'noop'
+# Sources can be any type of file, directory or jinja2 templates.
+# Destination should match the type of the source.
+# Jinja2 templates inside of a directory that would be copied over are also templated,
+# and their .j2 extensions will be stripped out.
+# If the source is a directory, it will be copied recursively.
+podman_systemd_service_extra_files: []
+
+# title: Action to perform
+# required: false
+# description-lines:
+# Specifies the action to perform with the systemd service.
+# Options include 'install', 'uninstall'.
+# Default is 'install', which sets up the service.
+# 'uninstall' will remove the service and its associated files.
+podman_systemd_service_action: install

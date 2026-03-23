@@ -1,0 +1,51 @@
+---
+# task/main file for podman_systemd_service
+- name: "Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_need_reload: false
+    _podman_systemd_service_need_restart: false
+
+- name: "Install systemd service"
+  when:
+    - podman_systemd_service_action == 'install'
+  block:
+    - name: "Import configure.yml"
+      ansible.builtin.include_tasks: configure.yml
+
+    - name: "Populate service facts"
+      ansible.builtin.service_facts:
+
+    - name: "Set restart-check variable"
+      ansible.builtin.set_fact:
+        _podman_systemd_service_need_restart: true
+      when:
+        - ansible_facts.services[podman_systemd_service_name~'.service'] is not defined or
+          ansible_facts.services[podman_systemd_service_name~'.service'].state != 'running'
+
+    - name: "Reload systemd daemon"
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: "Start service: {{ podman_systemd_service_name }}"
+      ansible.builtin.service:
+        name: "{{ podman_systemd_service_name }}"
+        state: restarted
+      throttle: 1
+      when:
+        - _podman_systemd_service_need_restart
+        - podman_systemd_service_start
+
+    - name: "Reload service: {{ podman_systemd_service_name }}"
+      ansible.builtin.service:
+        name: "{{ podman_systemd_service_name }}"
+        state: reloaded
+      throttle: 1
+      when:
+        - podman_systemd_service_start
+        - _podman_systemd_service_need_reload
+        - not _podman_systemd_service_need_restart
+
+- name: "Uninstall systemd service"
+  when:
+    - podman_systemd_service_action == 'uninstall'
+  ansible.builtin.include_tasks: uninstall.yml

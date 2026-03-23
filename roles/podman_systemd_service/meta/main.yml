@@ -1,0 +1,26 @@
+---
+# meta file for podman_systemd_service
+galaxy_info:
+  namespace: "ednz_cloud"
+  role_name: "podman_systemd_service"
+  author: "Bertrand Lanson"
+  description: "Create Systemd services for podman containers using the quadlet generator."
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+  galaxy_tags:
+    - "ubuntu"
+    - "debian"
+    - "podman"
+    - "systemd"
+    - "quadlet"
+
+dependencies: []

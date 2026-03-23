@@ -1,0 +1,27 @@
+---
+# task/uninstall file for podman_systemd_service
+- name: "uninstall | Populate service facts"
+  ansible.builtin.service_facts:
+
+- name: "uninstall | Stop: {{ podman_systemd_service_name }}"
+  ansible.builtin.systemd:
+    name: "{{ podman_systemd_service_name }}"
+    state: stopped
+  when:
+    - podman_systemd_service_name~".service" in ansible_facts.services.keys()
+
+- name: "uninstall | Remove quadlet container file"
+  ansible.builtin.file:
+    path: "{{ podman_systemd_service_path }}/{{ podman_systemd_service_name }}.container"
+    state: absent
+  register: _podman_systemd_service_unit_file_remove
+
+- name: "uninstall | Remove ENV file"
+  ansible.builtin.file:
+    path: "{{ podman_systemd_service_sysconf_dir }}/{{ podman_systemd_service_name }}"
+    state: absent
+
+- name: "uninstall | Reload systemd daemon"
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: _podman_systemd_service_unit_file_remove.changed # noqa: no-handler

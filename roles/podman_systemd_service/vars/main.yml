@@ -1,0 +1,49 @@
+---
+# vars file for podman_systemd_service
+
+# title: Quadlet container files directory
+# required: false
+# description-lines:
+# Directory where podman quadlet .container files are stored.
+# The systemd generator reads this directory to create the corresponding .service units.
+podman_systemd_service_path: /etc/containers/systemd
+
+# title: Systemd sysconfig directory
+# required: false
+# description-lines:
+# Directory where environment variable files for systemd are stored.
+# Typically /etc/default on Debian-based systems.
+podman_systemd_service_sysconf_dir: /etc/default
+
+# title: Default systemd unit options
+# required: false
+# description-lines:
+# Default options for the [Unit] section of the quadlet .container file.
+podman_systemd_service_unit_options_default: {}
+
+# title: Default container options
+# required: false
+# description-lines:
+# Default options for the [Container] section of the quadlet .container file.
+# Sets the container name, image, and points to the environment file.
+podman_systemd_service_container_options_default:
+  ContainerName: "{{ podman_systemd_service_name }}"
+  EnvironmentFile: "{{ podman_systemd_service_sysconf_dir }}/{{ podman_systemd_service_name }}"
+  Image: "{{ podman_systemd_service_image }}"
+
+# title: Default systemd service options
+# required: false
+# description-lines:
+# Default options for the [Service] section of the quadlet .container file.
+podman_systemd_service_service_options_default:
+  Restart: always
+  RestartSec: 10s
+
+# title: Default systemd install options
+# required: false
+# description-lines:
+# Default options for the [Install] section of the quadlet .container file.
+# For repeated options, a list of values is expected (e.g., WantedBy).
+podman_systemd_service_install_options_default:
+  WantedBy:
+    - multi-user.target

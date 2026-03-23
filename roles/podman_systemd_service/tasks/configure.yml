@@ -1,0 +1,139 @@
+---
+# task/configure file for podman_systemd_service
+- name: "configure | Create ENV file for service"
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ podman_systemd_service_sysconf_dir }}/{{ podman_systemd_service_name }}"
+    owner: root
+    group: root
+    mode: "0600"
+  register: _podman_systemd_service_env_file
+
+- name: "configure | Pull container image"
+  containers.podman.podman_image:
+    name: "{{ podman_systemd_service_image }}"
+    force: "{{ podman_systemd_service_pull_force | bool }}"
+    state: present
+  register: _podman_systemd_service_image_pull
+  when: podman_systemd_service_pull_image
+
+- name: "configure | Merge user defined unit options with defaults"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_unit_options: >-
+      {{ podman_systemd_service_unit_options_default |
+        combine(podman_systemd_service_unit_options, recursive=True) }}
+
+- name: "configure | Merge user defined container options with defaults"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_container_options: >-
+      {{ podman_systemd_service_container_options_default |
+        combine(podman_systemd_service_container_options, recursive=True) }}
+
+- name: "configure | Merge user defined service options with defaults"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_service_options: >-
+      {{ podman_systemd_service_service_options_default |
+        combine(podman_systemd_service_service_options, recursive=True) }}
+
+- name: "configure | Merge user defined install options with defaults"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_install_options: >-
+      {{ podman_systemd_service_install_options_default |
+        combine(podman_systemd_service_install_options, recursive=True) }}
+
+- name: "configure | Ensure quadlet directory exists"
+  ansible.builtin.file:
+    path: "{{ podman_systemd_service_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: "configure | Create quadlet container file"
+  ansible.builtin.template:
+    src: unit.j2
+    dest: "{{ podman_systemd_service_path }}/{{ podman_systemd_service_name }}.container"
+    owner: root
+    group: root
+    mode: "0644"
+  register: _podman_systemd_service_unit_file
+
+- name: "configure | Copy extra configuration files"
+  when: podman_systemd_service_extra_files | length > 0
+  block:
+    - name: "configure | Populate empty on_change list"
+      ansible.builtin.set_fact:
+        _podman_systemd_service_extra_file_changes: []
+
+    - name: "configure | Get extra file types"
+      ansible.builtin.stat:
+        path: "{{ item.src }}"
+      loop: "{{ podman_systemd_service_extra_files }}"
+      register: podman_systemd_service_extra_files_stat
+      delegate_to: localhost
+
+    - name: "configure | Set list for file sources"
+      vars:
+        _podman_systemd_service_file_sources: []
+      ansible.builtin.set_fact:
+        _podman_systemd_service_file_sources: "{{ _podman_systemd_service_file_sources + [item.item] }}"
+      when: item.stat.isreg
+      loop: "{{ podman_systemd_service_extra_files_stat.results }}"
+      loop_control:
+        loop_var: item
+      delegate_to: localhost
+
+    - name: "configure | Set list for directory sources"
+      vars:
+        _podman_systemd_service_dir_sources: []
+      ansible.builtin.set_fact:
+        _podman_systemd_service_dir_sources: "{{ _podman_systemd_service_dir_sources + [item.item] }}"
+      when: item.stat.isdir
+      loop: "{{ podman_systemd_service_extra_files_stat.results }}"
+      loop_control:
+        loop_var: item
+      delegate_to: localhost
+
+    - name: "configure | Template extra file sources"
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest | regex_replace('\\.j2$', '') }}"
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.group | default('root') }}"
+        mode: "{{ item.mode | default('0644') }}"
+      loop: "{{ _podman_systemd_service_file_sources }}"
+      when: _podman_systemd_service_file_sources is defined
+      register: _podman_systemd_service_extra_file_template
+
+    - name: "configure | Populate on_change list for extra files"
+      ansible.builtin.set_fact:
+        _podman_systemd_service_extra_file_changes: >-
+          {{ _podman_systemd_service_extra_file_changes + [item.item.on_change | default('noop')] }}
+      loop: "{{ _podman_systemd_service_extra_file_template.results }}"
+      when: item.changed # noqa: no-handler
+
+    - name: "configure | Template extra directory sources"
+      ansible.builtin.include_tasks: recursive_copy_extra_dirs.yml
+      loop: "{{ _podman_systemd_service_dir_sources }}"
+      loop_control:
+        loop_var: dir_source_item
+      when: _podman_systemd_service_dir_sources is defined
+
+    - name: "configure | Deduplicate on_change list"
+      ansible.builtin.set_fact:
+        _podman_systemd_service_extra_file_changes: "{{ _podman_systemd_service_extra_file_changes | unique }}"
+
+    - name: "configure | Set reload-check & restart-check from extra file changes"
+      ansible.builtin.set_fact:
+        _podman_systemd_service_need_reload: "{{ 'reload' in _podman_systemd_service_extra_file_changes }}"
+        _podman_systemd_service_need_restart: "{{ 'restart' in _podman_systemd_service_extra_file_changes }}"
+
+- name: "configure | Set reload-check & restart-check variable"
+  ansible.builtin.set_fact:
+    _podman_systemd_service_need_daemon_reload: >-
+      {{ _podman_systemd_service_unit_file.changed | bool }}
+    _podman_systemd_service_need_restart: true
+  when: >- # noqa: no-handler
+    _podman_systemd_service_env_file.changed or
+    _podman_systemd_service_unit_file.changed or
+    _podman_systemd_service_image_pull.changed

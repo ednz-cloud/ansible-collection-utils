@@ -1,0 +1,13 @@
+{% if _podman_systemd_service_unit_options %}
+[Unit]
+{{ _podman_systemd_service_unit_options | ednz_cloud.utils.to_systemd_section }}
+
+{% endif %}
+[Container]
+{{ _podman_systemd_service_container_options | ednz_cloud.utils.to_systemd_section }}
+
+[Service]
+{{ _podman_systemd_service_service_options | ednz_cloud.utils.to_systemd_section }}
+
+[Install]
+{{ _podman_systemd_service_install_options | ednz_cloud.utils.to_systemd_section }}
