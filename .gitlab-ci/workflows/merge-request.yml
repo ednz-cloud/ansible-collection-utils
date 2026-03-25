@@ -109,6 +109,35 @@ include:
           changes:
             - roles/docker_systemd_service/**/*
             - extensions/molecule/docker_systemd_service__*/**
+            - plugins/filter/to_systemd_section.py
+            - plugins/filter/to_cli_flags.py
+
+  - project: ednz-cloud/gitlab-ci-library
+    ref: main
+    file: includes/molecule-e2e-tests.yml
+    inputs:
+      stage: e2e-tests
+      identifier: podman_systemd_service
+      scenarios:
+        - podman_systemd_service__default__openstack
+        - podman_systemd_service__with_custom_flags__openstack
+        - podman_systemd_service__with_extra_files__openstack
+      scenario_configs:
+        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
+        - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
+      needs:
+        - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
+          artifacts: true
+        - job: e2e-tests:pre:set-molecule-env
+          artifacts: true
+      rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME =~ /^master|main$/'
+          changes:
+            - roles/docker_systemd_service/**/*
+            - extensions/molecule/podman_systemd_service__*/**
+            - plugins/filter/to_systemd_section.py
 
   - project: ednz-cloud/gitlab-ci-library
     ref: main
