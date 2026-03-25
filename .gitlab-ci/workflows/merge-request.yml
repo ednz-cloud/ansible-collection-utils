@@ -120,7 +120,7 @@ include:
       identifier: podman_systemd_service
       scenarios:
         - podman_systemd_service__default__openstack
-        - podman_systemd_service__with_custom_flags__openstack
+        - podman_systemd_service__with_custom_options__openstack
         - podman_systemd_service__with_extra_files__openstack
       scenario_configs:
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
