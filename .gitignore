@@ -3,7 +3,7 @@
 .vscode
 roles/ednz_cloud.*
 molecule/**/k3s_secret.yml
-
+collections
 tests/output
 
 .ruff_cache
