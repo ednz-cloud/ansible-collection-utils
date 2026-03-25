@@ -1,0 +1,82 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: "Test: file /etc/default/nginx"
+      block:
+        - name: "Stat file /etc/default/nginx"
+          ansible.builtin.stat:
+            path: "/etc/default/nginx"
+          register: stat_etc_default_nginx
+
+        - name: "Slurp file /etc/default/nginx"
+          ansible.builtin.slurp:
+            src: "/etc/default/nginx"
+          register: slurp_etc_default_nginx
+
+        - name: "Verify file /etc/default/nginx"
+          vars:
+            nginx_expected_env_file: |
+              TEST_ENV=test
+          ansible.builtin.assert:
+            that:
+              - stat_etc_default_nginx.stat.exists
+              - stat_etc_default_nginx.stat.isreg
+              - stat_etc_default_nginx.stat.pw_name == 'root'
+              - stat_etc_default_nginx.stat.gr_name == 'root'
+              - stat_etc_default_nginx.stat.mode == '0600'
+              - (slurp_etc_default_nginx.content | b64decode | trim) ==
+                (nginx_expected_env_file | trim)
+
+    - name: "Test: quadlet file /etc/containers/systemd/nginx.container"
+      block:
+        - name: "Stat file /etc/containers/systemd/nginx.container"
+          ansible.builtin.stat:
+            path: "/etc/containers/systemd/nginx.container"
+          register: stat_etc_containers_systemd_nginx_container
+
+        - name: "Slurp file /etc/containers/systemd/nginx.container"
+          ansible.builtin.slurp:
+            src: "/etc/containers/systemd/nginx.container"
+          register: slurp_etc_containers_systemd_nginx_container
+
+        - name: "Verify quadlet file /etc/containers/systemd/nginx.container"
+          vars:
+            nginx_expected_container_file: |
+              [Unit]
+              Requires=multi-user.target
+
+              [Container]
+              ContainerName=nginx
+              EnvironmentFile=/etc/default/nginx
+              Image=docker.io/nginx:1.27
+              Network=host
+              PublishPort=8080:80
+
+              [Service]
+              Restart=always
+              RestartSec=10s
+
+              [Install]
+              WantedBy=multi-user.target
+          ansible.builtin.assert:
+            that:
+              - stat_etc_containers_systemd_nginx_container.stat.exists
+              - stat_etc_containers_systemd_nginx_container.stat.isreg
+              - stat_etc_containers_systemd_nginx_container.stat.pw_name == 'root'
+              - stat_etc_containers_systemd_nginx_container.stat.gr_name == 'root'
+              - stat_etc_containers_systemd_nginx_container.stat.mode == '0644'
+              - (slurp_etc_containers_systemd_nginx_container.content | b64decode) == nginx_expected_container_file
+
+    - name: "Test: service nginx"
+      block:
+        - name: "Get service facts"
+          ansible.builtin.service_facts:
+
+        - name: "Verify service nginx"
+          ansible.builtin.assert:
+            that:
+              - ansible_facts.services['nginx.service'] is defined
+              - ansible_facts.services['nginx.service']['state'] == 'running'

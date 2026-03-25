@@ -1,0 +1,13 @@
+---
+podman_systemd_service_name: "nginx"
+podman_systemd_service_image: docker.io/nginx
+podman_systemd_service_env: {}
+podman_systemd_service_pull_image: true
+podman_systemd_service_pull_force: false
+podman_systemd_service_unit_options: {}
+podman_systemd_service_container_options: {}
+podman_systemd_service_service_options: {}
+podman_systemd_service_install_options: {}
+podman_systemd_service_start: true
+podman_systemd_service_extra_files: []
+podman_systemd_service_action: install

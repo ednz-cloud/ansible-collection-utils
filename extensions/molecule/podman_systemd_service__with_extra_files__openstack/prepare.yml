@@ -1,0 +1,20 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  tasks:
+    - name: "Install podman"
+      ansible.builtin.include_role:
+        name: ednz_cloud.utils.manage_apt_packages
+      vars:
+        manage_apt_packages_list:
+          - name: podman
+            state: present
+
+    - name: "Create extra files directory"
+      ansible.builtin.file:
+        path: "/opt/files"
+        state: directory
+        owner: root
+        group: root
+        mode: "0775"
