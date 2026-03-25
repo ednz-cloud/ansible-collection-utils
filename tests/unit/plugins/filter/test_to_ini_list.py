@@ -94,6 +94,16 @@ def _to_ini_list():
             ],
         ),
     ],
+    ids=[
+        "empty_dict",
+        "single_section_single_key",
+        "single_section_multiple_keys",
+        "nested_section",
+        "nested_section_with_sibling_key",
+        "list_value_joined",
+        "mixed_types",
+        "multiple_sections",
+    ],
 )
 def test_to_ini_list_variants(_to_ini_list, ini_dict, expected):
     result = _to_ini_list(ini_dict)

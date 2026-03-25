@@ -54,6 +54,27 @@ import pytest
             '--cap-add "NET_ADMIN"',
         ),
     ],
+    ids=[
+        "empty_list",
+        "none_input",
+        "single_string_flag",
+        "single_string_flag_multiline",
+        "single_string_flag_multiline_trailing_backslash",
+        "multiple_string_flags",
+        "multiple_string_flags_multiline",
+        "multiple_string_flags_multiline_trailing_backslash",
+        "bool_true_and_false_dict_flags",
+        "bool_false_and_true_dict_flags",
+        "string_value_dict_flag",
+        "string_value_dict_flag_multiline_trailing_backslash",
+        "list_value_dict_flag",
+        "list_value_dict_flag_multiline",
+        "list_value_dict_flag_multiline_trailing_backslash",
+        "mixed_flags",
+        "mixed_flags_multiline",
+        "none_value_dict_flag_skipped",
+        "single_item_list_multiline",
+    ],
 )
 def test_to_cli_flags_variants(
     _to_cli_flags, flags, multiline, trailing_backslash, expected

@@ -3,14 +3,17 @@ name = "ednz_cloud.utils"
 version = "0.11.3"
 description = "ednz_cloud.utils Ansible collection"
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.12,<3.15"
 dependencies = [
   "ansible-core>=2.20,<2.21",
   "ansible-lint>=26.3.0",
+  "coverage>=7.13.5",
   "hvac>=2.4.0",
   "molecule>=25.12.0",
   "molecule-plugins>=25.8.12",
   "openstacksdk>=4.9.0",
+  "pytest>=9.0.2",
+  "pytest-xdist>=3.8.0",
   "yamllint>=1.38.0",
 ]
 

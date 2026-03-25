@@ -43,6 +43,17 @@ import pytest
             False,
         ),
     ],
+    ids=[
+        "single_item_changed",
+        "single_item_not_changed",
+        "item_not_in_list",
+        "multiple_items_target_changed",
+        "multiple_items_target_not_changed",
+        "item_missing_changed_key",
+        "empty_list",
+        "duplicate_items_one_changed",
+        "duplicate_items_none_changed",
+    ],
 )
 def test_item_changed_in_list_variants(_item_changed_in_list, results, item, expected):
     assert _item_changed_in_list(results, item) == expected
