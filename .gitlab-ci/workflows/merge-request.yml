@@ -125,7 +125,6 @@ include:
       scenario_configs:
         - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
-        - '{"MOLECULE_TEST_OS":"Ubuntu 22.04 LTS Jammy Jellyfish","MOLECULE_TEST_USER":"ubuntu"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:
         - job: e2e-tests:pre:vault:get-secrets:pcp-w3rxsrj-dc4-a
