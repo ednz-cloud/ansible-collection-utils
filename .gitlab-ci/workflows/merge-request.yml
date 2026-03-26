@@ -123,7 +123,6 @@ include:
         - podman_systemd_service__with_custom_options__openstack
         - podman_systemd_service__with_extra_files__openstack
       scenario_configs:
-        - '{"MOLECULE_TEST_OS":"Debian 12 bookworm","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Debian 13 trixie","MOLECULE_TEST_USER":"debian"}'
         - '{"MOLECULE_TEST_OS":"Ubuntu 24.04 LTS Noble Numbat","MOLECULE_TEST_USER":"ubuntu"}'
       needs:

@@ -13,7 +13,6 @@ galaxy_info:
         - noble
     - name: Debian
       versions:
-        - bookworm
         - trixie
   galaxy_tags:
     - "ubuntu"
