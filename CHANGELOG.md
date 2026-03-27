@@ -1,3 +1,11 @@
+## v0.12.0 (2026-03-27)
+
+### Feat
+
+- **roles/docker_systemd_service**: switch to using to_systemd_section filter plugin
+- **roles**: add podman_systemd_service role
+- **plugins**: add to_systemd_section filter plugin to handle creation of systemd service files
+
 ## v0.11.3 (2026-02-21)
 
 ### Fix
