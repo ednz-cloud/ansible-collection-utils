@@ -72,9 +72,12 @@
       register: podman_systemd_service_extra_files_stat
       delegate_to: localhost
 
-    - name: "configure | Set list for file sources"
-      vars:
+    - name: "configure | Initialize file/directory source lists"
+      ansible.builtin.set_fact:
         _podman_systemd_service_file_sources: []
+        _podman_systemd_service_dir_sources: []
+
+    - name: "configure | Set list for file sources"
       ansible.builtin.set_fact:
         _podman_systemd_service_file_sources: "{{ _podman_systemd_service_file_sources + [item.item] }}"
       when: item.stat.isreg
@@ -84,8 +87,6 @@
       delegate_to: localhost
 
     - name: "configure | Set list for directory sources"
-      vars:
-        _podman_systemd_service_dir_sources: []
       ansible.builtin.set_fact:
         _podman_systemd_service_dir_sources: "{{ _podman_systemd_service_dir_sources + [item.item] }}"
       when: item.stat.isdir
