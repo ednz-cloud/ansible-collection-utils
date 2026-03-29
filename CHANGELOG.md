@@ -1,3 +1,9 @@
+## v0.12.1 (2026-03-29)
+
+### Fix
+
+- **roles/podman_systemd_service**: set_fact before extra_files loop
+
 ## v0.12.0 (2026-03-27)
 
 ### Feat
