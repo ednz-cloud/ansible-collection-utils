@@ -31,6 +31,7 @@
         name: "{{ podman_systemd_service_name }}"
         state: restarted
       throttle: 1
+      ignore_errors: "{{ ansible_check_mode }}"
       when:
         - _podman_systemd_service_need_restart
         - podman_systemd_service_start
@@ -40,6 +41,7 @@
         name: "{{ podman_systemd_service_name }}"
         state: reloaded
       throttle: 1
+      ignore_errors: "{{ ansible_check_mode }}"
       when:
         - podman_systemd_service_start
         - _podman_systemd_service_need_reload
