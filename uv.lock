@@ -464,7 +464,7 @@ wheels = [
 
 [[package]]
 name = "ednz-cloud-utils"
-version = "0.12.2"
+version = "0.13.0"
 source = { virtual = "." }
 dependencies = [
     { name = "ansible-core" },

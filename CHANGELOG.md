@@ -1,3 +1,10 @@
+## v0.13.0 (2026-05-27)
+
+### Feat
+
+- **roles/docker_systemd_service**: allow service start failure in check mode
+- **roles/podman_systemd_service**: allow service start failure in check mode
+
 ## v0.12.2 (2026-05-18)
 
 ### Fix
