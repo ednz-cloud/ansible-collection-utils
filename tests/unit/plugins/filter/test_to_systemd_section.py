@@ -40,11 +40,6 @@ import pytest
             },
             "ContainerName=my_service\nEnvironmentFile=/etc/default/my_service\nImage=nginx:latest",
         ),
-        # Typical [Install] section
-        (
-            {"WantedBy": ["multi-user.target"]},
-            "WantedBy=multi-user.target",
-        ),
         # Integer value
         ({"TimeoutStartSec": 30}, "TimeoutStartSec=30"),
         # Multiple repeated directives alongside scalars
@@ -65,7 +60,6 @@ import pytest
         "single_item_list",
         "mixed_scalar_and_list",
         "container_section_defaults",
-        "install_section",
         "integer_value",
         "multiple_repeated_with_scalars",
     ],

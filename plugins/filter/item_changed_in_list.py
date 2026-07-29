@@ -1,4 +1,4 @@
-class FilterModule(object):
+class FilterModule:
     """
     Ansible filter plugin for checking item change status in results.
     """
@@ -19,9 +19,9 @@ class FilterModule(object):
             bool: True if the `changed` attribute is True for the specified item, False otherwise.
         """
         if not isinstance(results, list):
-            raise ValueError("The 'results' argument must be a list.")
+            raise TypeError("The 'results' argument must be a list.")
         if not isinstance(item, str):
-            raise ValueError("The 'item' argument must be a string.")
+            raise TypeError("The 'item' argument must be a string.")
 
         for result in results:
             if result.get("item") == item:

@@ -24,7 +24,7 @@ class CLIFlagBuilder:
 
     def _build_flag(self, item):
         if isinstance(item, dict):
-            key = list(item.keys())[0]
+            key = next(iter(item.keys()))
             value = item[key]
             if value is None:
                 return None

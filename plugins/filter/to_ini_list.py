@@ -1,6 +1,3 @@
-from typing import List
-
-
 class IniFileEntry:
     def __init__(self, section: str, option: str, value: str):
         self.section = section
@@ -15,13 +12,13 @@ class IniFileEntry:
         }
 
 
-class FilterModule(object):
+class FilterModule:
     def filters(self):
         return {"to_ini_list": self.to_ini_list}
 
     def parse_ini_section(
         self, section_name: str, section_conf: dict
-    ) -> List[IniFileEntry]:
+    ) -> list[IniFileEntry]:
         section_list = []
         for key, value in section_conf.items():
             if type(value) is dict:
@@ -44,7 +41,7 @@ class FilterModule(object):
                 )
         return section_list
 
-    def to_ini_list(self, ini_file_dict: dict) -> List[IniFileEntry]:
+    def to_ini_list(self, ini_file_dict: dict) -> list[IniFileEntry]:
         """
         Converts a nested dictionary structure into a flat list of dictionaries
         for use with the Ansible ini_file module.
