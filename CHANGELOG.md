@@ -1,3 +1,9 @@
+## v0.13.1 (2026-09-22)
+
+### Fix
+
+- **roles/manage_apt_packages**: improve looping logic for install/uninstall of packages
+
 ## v0.13.0 (2026-05-27)
 
 ### Feat
