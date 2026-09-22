@@ -5,11 +5,25 @@
     update_cache: true
     cache_valid_time: "{{ manage_apt_packages_apt_cache_time }}"
 
+- name: "Compute per-package name spec and effective state"
+  ansible.builtin.set_fact:
+    _manage_apt_packages_specs: >-
+      {%- set _specs = [] -%}
+      {%- for pkg in manage_apt_packages_list -%}
+        {%- set _version = pkg.get('version') | default(None, true) -%}
+        {%- set _ = _specs.append({
+              'name': pkg['name'] ~ ((_version not in [None, '', 'latest']) | ternary('=' ~ _version, '')),
+              'state': pkg.get('state') | default('present', true)
+            }) -%}
+      {%- endfor -%}
+      {{ _specs }}
+  when: manage_apt_packages_list | length > 0
+
 - name: "Install/remove required apt packages"
   ansible.builtin.apt:
-    name: "{{ item.name }}{% if item.version is defined and item.version not in [None, '', 'latest'] %}={{ item.version }}{% endif %}"
-    state: "{{ item.state | default('present') }}"
+    name: "{{ _manage_apt_packages_specs | selectattr('state', 'equalto', item) | map(attribute='name') | list }}"
+    state: "{{ item }}"
     allow_downgrade: true
-  loop: "{{ manage_apt_packages_list }}"
+  loop: "{{ _manage_apt_packages_specs | map(attribute='state') | unique | list }}"
   when: manage_apt_packages_list | length > 0
   notify: "apt-autoremove"
