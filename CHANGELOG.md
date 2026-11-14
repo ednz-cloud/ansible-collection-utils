@@ -1,3 +1,9 @@
+## v0.13.2 (2026-11-14)
+
+### Fix
+
+- **deps**: update dependency ansible-core to >=2.22,<2.23
+
 ## v0.13.1 (2026-09-22)
 
 ### Fix
